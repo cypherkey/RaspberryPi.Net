@@ -8,12 +8,12 @@ using System.Text;
 // Micro Liquid Crystal Library
 // http://microliquidcrystal.codeplex.com
 // Appache License Version 2.0
-namespace RaspberryPiDotNet
+namespace RaspberryPiDotNet.MicroLiquidCrystal
 {
     /// <summary>
     /// Raspberry Pi GPIO provider for the Micro Liquid Crystal Library.
     /// </summary>
-    public class NetopiaGPIOLcdTransferProvider : IDisposable
+    public class RaspPiGPIOLcdTransferProvider : IDisposable, ILcdTransferProvider
     {
         private readonly GPIOFile _rsPort;
         private readonly GPIOFile _rwPort;
@@ -22,19 +22,19 @@ namespace RaspberryPiDotNet
         private readonly bool _fourBitMode;
         private bool _disposed;
 
-        public NetopiaGPIOLcdTransferProvider(GPIOFile.GPIOPins rs, GPIOFile.GPIOPins enable, GPIOFile.GPIOPins d4, GPIOFile.GPIOPins d5, GPIOFile.GPIOPins d6, GPIOFile.GPIOPins d7)
+        public RaspPiGPIOLcdTransferProvider(GPIOFile.GPIOPins rs, GPIOFile.GPIOPins enable, GPIOFile.GPIOPins d4, GPIOFile.GPIOPins d5, GPIOFile.GPIOPins d6, GPIOFile.GPIOPins d7)
             : this(true, rs, GPIOFile.GPIOPins.GPIO_NONE, enable, GPIOFile.GPIOPins.GPIO_NONE, GPIOFile.GPIOPins.GPIO_NONE, GPIOFile.GPIOPins.GPIO_NONE, GPIOFile.GPIOPins.GPIO_NONE, d4, d5, d6, d7)
         { }
 
-        public NetopiaGPIOLcdTransferProvider(GPIOFile.GPIOPins rs, GPIOFile.GPIOPins rw, GPIOFile.GPIOPins enable, GPIOFile.GPIOPins d4, GPIOFile.GPIOPins d5, GPIOFile.GPIOPins d6, GPIOFile.GPIOPins d7)
+        public RaspPiGPIOLcdTransferProvider(GPIOFile.GPIOPins rs, GPIOFile.GPIOPins rw, GPIOFile.GPIOPins enable, GPIOFile.GPIOPins d4, GPIOFile.GPIOPins d5, GPIOFile.GPIOPins d6, GPIOFile.GPIOPins d7)
             : this(true, rs, rw, enable, GPIOFile.GPIOPins.GPIO_NONE, GPIOFile.GPIOPins.GPIO_NONE, GPIOFile.GPIOPins.GPIO_NONE, GPIOFile.GPIOPins.GPIO_NONE, d4, d5, d6, d7)
         { }
 
-        public NetopiaGPIOLcdTransferProvider(GPIOFile.GPIOPins rs, GPIOFile.GPIOPins enable, GPIOFile.GPIOPins d0, GPIOFile.GPIOPins d1, GPIOFile.GPIOPins d2, GPIOFile.GPIOPins d3, GPIOFile.GPIOPins d4, GPIOFile.GPIOPins d5, GPIOFile.GPIOPins d6, GPIOFile.GPIOPins d7)
+        public RaspPiGPIOLcdTransferProvider(GPIOFile.GPIOPins rs, GPIOFile.GPIOPins enable, GPIOFile.GPIOPins d0, GPIOFile.GPIOPins d1, GPIOFile.GPIOPins d2, GPIOFile.GPIOPins d3, GPIOFile.GPIOPins d4, GPIOFile.GPIOPins d5, GPIOFile.GPIOPins d6, GPIOFile.GPIOPins d7)
             : this(false, rs, GPIOFile.GPIOPins.GPIO_NONE, enable, d0, d1, d2, d3, d4, d5, d6, d7)
         { }
 
-        public NetopiaGPIOLcdTransferProvider(GPIOFile.GPIOPins rs, GPIOFile.GPIOPins rw, GPIOFile.GPIOPins enable, GPIOFile.GPIOPins d0, GPIOFile.GPIOPins d1, GPIOFile.GPIOPins d2, GPIOFile.GPIOPins d3, GPIOFile.GPIOPins d4, GPIOFile.GPIOPins d5, GPIOFile.GPIOPins d6, GPIOFile.GPIOPins d7)
+        public RaspPiGPIOLcdTransferProvider(GPIOFile.GPIOPins rs, GPIOFile.GPIOPins rw, GPIOFile.GPIOPins enable, GPIOFile.GPIOPins d0, GPIOFile.GPIOPins d1, GPIOFile.GPIOPins d2, GPIOFile.GPIOPins d3, GPIOFile.GPIOPins d4, GPIOFile.GPIOPins d5, GPIOFile.GPIOPins d6, GPIOFile.GPIOPins d7)
             : this(false, rs, rw, enable, d0, d1, d2, d3, d4, d5, d6, d7)
         { }
 
@@ -53,7 +53,7 @@ namespace RaspberryPiDotNet
         /// <param name="d5"></param>
         /// <param name="d6"></param>
         /// <param name="d7"></param>
-        public NetopiaGPIOLcdTransferProvider(bool fourBitMode, GPIOFile.GPIOPins rs, GPIOFile.GPIOPins rw, GPIOFile.GPIOPins enable, 
+        public RaspPiGPIOLcdTransferProvider(bool fourBitMode, GPIOFile.GPIOPins rs, GPIOFile.GPIOPins rw, GPIOFile.GPIOPins enable, 
                                                  GPIOFile.GPIOPins d0, GPIOFile.GPIOPins d1, GPIOFile.GPIOPins d2, GPIOFile.GPIOPins d3, 
                                                  GPIOFile.GPIOPins d4, GPIOFile.GPIOPins d5, GPIOFile.GPIOPins d6, GPIOFile.GPIOPins d7)
         {
@@ -83,7 +83,7 @@ namespace RaspberryPiDotNet
             Dispose(true);
         }
 
-        ~NetopiaGPIOLcdTransferProvider()
+        ~RaspPiGPIOLcdTransferProvider()
         {
             Dispose(false);
         }
