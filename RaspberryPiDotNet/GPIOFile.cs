@@ -7,7 +7,6 @@ using System.IO;
 
 // Author: Aaron Anderson <aanderson@netopia.ca>
 // Based on work done by x4m and britguy (http://www.raspberrypi.org/phpBB3/viewtopic.php?f=34&t=6720)
-// DL: https://dl.dropbox.com/u/7610280/GPIO.cs
 namespace RaspberryPiDotNet
 {
     public class GPIOFile : GPIO, IDisposable
@@ -19,6 +18,7 @@ namespace RaspberryPiDotNet
 
         private static Dictionary<int, DirectionEnum> _exported = new Dictionary<int, DirectionEnum>();
 
+        #region Constructor
         /// <summary>
         /// Access to the specified GPIO setup as an output port with an initial value of false (0)
         /// </summary>
@@ -56,6 +56,7 @@ namespace RaspberryPiDotNet
         {
             UnexportPin(_pin);
         }
+        #endregion
 
         #region Static Methods
         /// <summary>
