@@ -24,7 +24,7 @@ namespace RaspberryPiDotNet
         /// </summary>
         /// <param name="pin">The GPIO pin</param>
         public GPIOFile(GPIOPins pin)
-            : this(pin,DirectionEnum.OUT,false)
+            : base(pin,DirectionEnum.OUT,false)
         {
         }
 
@@ -34,8 +34,9 @@ namespace RaspberryPiDotNet
         /// <param name="pin">The GPIO pin</param>
         /// <param name="direction">Direction</param>
         public GPIOFile(GPIOPins pin, DirectionEnum direction)
-            : this(pin, direction, false)
+            : base(pin, direction, false)
         {
+            ExportPin(pin, direction);
         }
 
         /// <summary>
