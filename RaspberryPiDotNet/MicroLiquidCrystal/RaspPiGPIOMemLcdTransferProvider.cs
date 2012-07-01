@@ -165,6 +165,9 @@ namespace RaspberryPiDotNet.MicroLiquidCrystal
             }
 
             PulseEnable();
+
+            // The bcm2835 library is so fast that a delay is required.
+            System.Threading.Thread.Sleep(1);
         }
 
         private void PulseEnable()
