@@ -13,28 +13,28 @@ namespace RaspberryPiDotNet.MicroLiquidCrystal
     /// <summary>
     /// Raspberry Pi GPIO provider for the Micro Liquid Crystal Library.
     /// </summary>
-    public class RaspPiGPIOLcdTransferProvider : IDisposable, ILcdTransferProvider
+    public class RaspPiGPIOMemLcdTransferProvider : IDisposable, ILcdTransferProvider
     {
-        private readonly GPIOFile _rsPort;
-        private readonly GPIOFile _rwPort;
-        private readonly GPIOFile _enablePort;
-        private readonly GPIOFile[] _dataPorts;
+        private readonly GPIOMem _rsPort;
+        private readonly GPIOMem _rwPort;
+        private readonly GPIOMem _enablePort;
+        private readonly GPIOMem[] _dataPorts;
         private readonly bool _fourBitMode;
         private bool _disposed;
 
-        public RaspPiGPIOLcdTransferProvider(GPIOFile.GPIOPins rs, GPIOFile.GPIOPins enable, GPIOFile.GPIOPins d4, GPIOFile.GPIOPins d5, GPIOFile.GPIOPins d6, GPIOFile.GPIOPins d7)
-            : this(true, rs, GPIOFile.GPIOPins.GPIO_NONE, enable, GPIOFile.GPIOPins.GPIO_NONE, GPIOFile.GPIOPins.GPIO_NONE, GPIOFile.GPIOPins.GPIO_NONE, GPIOFile.GPIOPins.GPIO_NONE, d4, d5, d6, d7)
+        public RaspPiGPIOMemLcdTransferProvider(GPIOMem.GPIOPins rs, GPIOMem.GPIOPins enable, GPIOMem.GPIOPins d4, GPIOMem.GPIOPins d5, GPIOMem.GPIOPins d6, GPIOMem.GPIOPins d7)
+            : this(true, rs, GPIOMem.GPIOPins.GPIO_NONE, enable, GPIOMem.GPIOPins.GPIO_NONE, GPIOMem.GPIOPins.GPIO_NONE, GPIOMem.GPIOPins.GPIO_NONE, GPIOMem.GPIOPins.GPIO_NONE, d4, d5, d6, d7)
         { }
 
-        public RaspPiGPIOLcdTransferProvider(GPIOFile.GPIOPins rs, GPIOFile.GPIOPins rw, GPIOFile.GPIOPins enable, GPIOFile.GPIOPins d4, GPIOFile.GPIOPins d5, GPIOFile.GPIOPins d6, GPIOFile.GPIOPins d7)
-            : this(true, rs, rw, enable, GPIOFile.GPIOPins.GPIO_NONE, GPIOFile.GPIOPins.GPIO_NONE, GPIOFile.GPIOPins.GPIO_NONE, GPIOFile.GPIOPins.GPIO_NONE, d4, d5, d6, d7)
+        public RaspPiGPIOMemLcdTransferProvider(GPIOMem.GPIOPins rs, GPIOMem.GPIOPins rw, GPIOMem.GPIOPins enable, GPIOMem.GPIOPins d4, GPIOMem.GPIOPins d5, GPIOMem.GPIOPins d6, GPIOMem.GPIOPins d7)
+            : this(true, rs, rw, enable, GPIOMem.GPIOPins.GPIO_NONE, GPIOMem.GPIOPins.GPIO_NONE, GPIOMem.GPIOPins.GPIO_NONE, GPIOMem.GPIOPins.GPIO_NONE, d4, d5, d6, d7)
         { }
 
-        public RaspPiGPIOLcdTransferProvider(GPIOFile.GPIOPins rs, GPIOFile.GPIOPins enable, GPIOFile.GPIOPins d0, GPIOFile.GPIOPins d1, GPIOFile.GPIOPins d2, GPIOFile.GPIOPins d3, GPIOFile.GPIOPins d4, GPIOFile.GPIOPins d5, GPIOFile.GPIOPins d6, GPIOFile.GPIOPins d7)
-            : this(false, rs, GPIOFile.GPIOPins.GPIO_NONE, enable, d0, d1, d2, d3, d4, d5, d6, d7)
+        public RaspPiGPIOMemLcdTransferProvider(GPIOMem.GPIOPins rs, GPIOMem.GPIOPins enable, GPIOMem.GPIOPins d0, GPIOMem.GPIOPins d1, GPIOMem.GPIOPins d2, GPIOMem.GPIOPins d3, GPIOMem.GPIOPins d4, GPIOMem.GPIOPins d5, GPIOMem.GPIOPins d6, GPIOMem.GPIOPins d7)
+            : this(false, rs, GPIOMem.GPIOPins.GPIO_NONE, enable, d0, d1, d2, d3, d4, d5, d6, d7)
         { }
 
-        public RaspPiGPIOLcdTransferProvider(GPIOFile.GPIOPins rs, GPIOFile.GPIOPins rw, GPIOFile.GPIOPins enable, GPIOFile.GPIOPins d0, GPIOFile.GPIOPins d1, GPIOFile.GPIOPins d2, GPIOFile.GPIOPins d3, GPIOFile.GPIOPins d4, GPIOFile.GPIOPins d5, GPIOFile.GPIOPins d6, GPIOFile.GPIOPins d7)
+        public RaspPiGPIOMemLcdTransferProvider(GPIOMem.GPIOPins rs, GPIOMem.GPIOPins rw, GPIOMem.GPIOPins enable, GPIOMem.GPIOPins d0, GPIOMem.GPIOPins d1, GPIOMem.GPIOPins d2, GPIOMem.GPIOPins d3, GPIOMem.GPIOPins d4, GPIOMem.GPIOPins d5, GPIOMem.GPIOPins d6, GPIOMem.GPIOPins d7)
             : this(false, rs, rw, enable, d0, d1, d2, d3, d4, d5, d6, d7)
         { }
 
@@ -53,28 +53,28 @@ namespace RaspberryPiDotNet.MicroLiquidCrystal
         /// <param name="d5"></param>
         /// <param name="d6"></param>
         /// <param name="d7"></param>
-        public RaspPiGPIOLcdTransferProvider(bool fourBitMode, GPIOFile.GPIOPins rs, GPIOFile.GPIOPins rw, GPIOFile.GPIOPins enable, 
-                                                 GPIOFile.GPIOPins d0, GPIOFile.GPIOPins d1, GPIOFile.GPIOPins d2, GPIOFile.GPIOPins d3, 
-                                                 GPIOFile.GPIOPins d4, GPIOFile.GPIOPins d5, GPIOFile.GPIOPins d6, GPIOFile.GPIOPins d7)
+        public RaspPiGPIOMemLcdTransferProvider(bool fourBitMode, GPIOMem.GPIOPins rs, GPIOMem.GPIOPins rw, GPIOMem.GPIOPins enable, 
+                                                 GPIOMem.GPIOPins d0, GPIOMem.GPIOPins d1, GPIOMem.GPIOPins d2, GPIOMem.GPIOPins d3, 
+                                                 GPIOMem.GPIOPins d4, GPIOMem.GPIOPins d5, GPIOMem.GPIOPins d6, GPIOMem.GPIOPins d7)
         {
             _fourBitMode = fourBitMode;
 
-            if (rs == GPIOFile.GPIOPins.GPIO_NONE) throw new ArgumentException("rs");
-            _rsPort = new GPIOFile(rs);
+            if (rs == GPIOMem.GPIOPins.GPIO_NONE) throw new ArgumentException("rs");
+            _rsPort = new GPIOMem(rs);
 
             // we can save 1 pin by not using RW. Indicate by passing GPIO.GPIOPins.GPIO_NONE instead of pin#
-            if (rw != GPIOFile.GPIOPins.GPIO_NONE) // (RW is optional)
-                _rwPort = new GPIOFile(rw);
+            if (rw != GPIOMem.GPIOPins.GPIO_NONE) // (RW is optional)
+                _rwPort = new GPIOMem(rw);
 
-            if (enable == GPIOFile.GPIOPins.GPIO_NONE) throw new ArgumentException("enable");
-            _enablePort = new GPIOFile(enable);
+            if (enable == GPIOMem.GPIOPins.GPIO_NONE) throw new ArgumentException("enable");
+            _enablePort = new GPIOMem(enable);
 
             var dataPins = new[] { d0, d1, d2, d3, d4, d5, d6, d7};
-            _dataPorts = new GPIOFile[8];
+            _dataPorts = new GPIOMem[8];
             for (int i = 0; i < 8; i++)
             {
-                if (dataPins[i] != GPIOFile.GPIOPins.GPIO_NONE)
-                    _dataPorts[i] = new GPIOFile(dataPins[i]);
+                if (dataPins[i] != GPIOMem.GPIOPins.GPIO_NONE)
+                    _dataPorts[i] = new GPIOMem(dataPins[i]);
             }
         }
 
@@ -83,7 +83,7 @@ namespace RaspberryPiDotNet.MicroLiquidCrystal
             Dispose(true);
         }
 
-        ~RaspPiGPIOLcdTransferProvider()
+        ~RaspPiGPIOMemLcdTransferProvider()
         {
             Dispose(false);
         }

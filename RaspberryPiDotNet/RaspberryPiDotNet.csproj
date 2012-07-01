@@ -43,9 +43,10 @@
     <Compile Include="GPIO.cs" />
     <Compile Include="GPIOFile.cs" />
     <Compile Include="GPIOMem.cs" />
+    <Compile Include="MicroLiquidCrystal\RaspPiGPIOFileLcdTransferProvider.cs" />
+    <Compile Include="MicroLiquidCrystal\RaspPiGPIOMemLcdTransferProvider.cs" />
     <Compile Include="MicroLiquidCrystal\ILcdTransferProvider.cs" />
     <Compile Include="MicroLiquidCrystal\Lcd.cs" />
-    <Compile Include="MicroLiquidCrystal\RaspPiGPIOLcdTransferProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
