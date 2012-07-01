@@ -8,17 +8,19 @@ using System.Diagnostics;
 namespace RaspberryPiDotNet
 {
     /// <summary>
-    /// Raspberry Pi GPIO using the direct memory access method. This requires the bcm2835 GPIO library provided by 
+    /// Raspberry Pi GPIO using the direct memory access method.
+    /// This requires the bcm2835 GPIO library provided by 
     /// Mike McCauley (mikem@open.com.au) at http://www.open.com.au/mikem/bcm2835/index.html.
     /// 
-    /// To create the shared object, download the source code from the link above. The standard Makefile compiled a
-    /// statically linked library. In the src directory run:
+    /// To create the shared object, download the source code from the link above. The standard Makefile compiles a
+    /// statically linked library. To build a shared object, do:
+    ///    tar -zxf bcm2835-1.3.tar.gz
+    ///    cd bcm2835-1.3/src
     ///    make libbcm2835.a
     ///    cc -shared bcm2835.o -o libbcm2835.so
     /// </summary>
     public class GPIOMem : GPIO, IDisposable
     {
-
         private static bool _initialized = false;
 
         #region Constructor
