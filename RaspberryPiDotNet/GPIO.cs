@@ -89,19 +89,30 @@ namespace RaspberryPiDotNet
         protected GPIOPins _pin;
 
         /// <summary>
-        /// Creates a GPIOFile class with 
+        /// Access to the specified GPIO setup as an output port with an initial value of false (0)
         /// </summary>
-        /// <param name="pin"></param>
+        /// <param name="pin">The GPIO pin</param>
         public GPIO(GPIOPins pin)
             : this(pin,DirectionEnum.OUT,false)
         {
         }
 
+        /// <summary>
+        /// Access to the specified GPIO setup with the specified direction with an initial value of false (0)
+        /// </summary>
+        /// <param name="pin">The GPIO pin</param>
+        /// <param name="direction">Direction</param>
         public GPIO(GPIOPins pin, DirectionEnum direction)
             : this(pin, direction, false)
         {
         }
 
+        /// <summary>
+        /// Access to the specified GPIO setup with the specified direction with the specified initial value
+        /// </summary>
+        /// <param name="pin">The GPIO pin</param>
+        /// <param name="direction">Direction</param>
+        /// <param name="initialValue">Initial Value</param>
         public GPIO(GPIOPins pin, DirectionEnum direction, bool initialValue)
         {
             this._pin = pin;
