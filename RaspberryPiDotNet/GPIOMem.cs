@@ -65,7 +65,7 @@ namespace RaspberryPiDotNet
         /// <returns></returns>
         private static bool Initialize()
         {
-            bool ret = true;
+            int ret = 1;
             if (!_initialized)
             {
                 // initialize the mapped memory
@@ -73,7 +73,7 @@ namespace RaspberryPiDotNet
                 _initialized = true;
             }
 
-            return ret;
+            return ret == 0 ? false : true;
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace RaspberryPiDotNet
         }
 
         /// <summary>
-        /// Static method to write a value to the specified pin. When using the static methods ensure you use the CleanUp() method when done.
+        /// Static method to write a value to the specified pin.
         /// </summary>
         /// <param name="pin">The GPIO pin</param>
         /// <param name="value">The value to write to the pin</param>
@@ -113,6 +113,22 @@ namespace RaspberryPiDotNet
 
             bcm2835_gpio_write((uint)pin, value ? (uint)1 : (uint)0);
             Debug.WriteLine("output to pin " + pin + "/gpio " + (int)pin + ", value was " + value);
+        }
+
+        /// <summary>
+        /// Static method to read a value to the specified pin.
+        /// </summary>
+        /// <param name="pin">The GPIO pin</param>
+        /// <returns>The value read from the pin</returns>
+        public static bool Read(GPIOPins pin)
+        {
+            ExportPin(pin, DirectionEnum.IN);
+
+            uint value = bcm2835_gpio_lev((uint)pin);
+            bool returnValue = value == 0 ? false : true;
+            Debug.WriteLine("input from pin " + pin + "/gpio " + (int)pin + ", value was " + returnValue);
+
+            return returnValue;
         }
         #endregion
 
@@ -132,7 +148,7 @@ namespace RaspberryPiDotNet
         /// <returns>The value read from the pin</returns>
         public override bool Read()
         {
-            return false;
+            return Read(_pin);
         }
 
         /// <summary>
@@ -145,13 +161,16 @@ namespace RaspberryPiDotNet
 
         #region Imported functions
         [DllImport("libbcm2835.so", EntryPoint = "bcm2835_init")]
-        static extern bool bcm2835_init();
+        static extern int bcm2835_init();
 
         [DllImport("libbcm2835.so", EntryPoint = "bcm2835_gpio_fsel")]
         static extern void bcm2835_gpio_fsel(uint pin, uint mode);
 
         [DllImport("libbcm2835.so", EntryPoint = "bcm2835_gpio_write")]
         static extern void bcm2835_gpio_write(uint pin, uint value);
+
+        [DllImport("libbcm2835.so", EntryPoint = "bcm2835_gpio_write")]
+        static extern uint bcm2835_gpio_lev(uint pin);
         #endregion
     }
 }
