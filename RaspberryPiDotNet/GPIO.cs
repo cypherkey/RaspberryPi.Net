@@ -6,11 +6,11 @@ using System.Text;
 // Author: Aaron Anderson <aanderson@netopia.ca>
 namespace RaspberryPiDotNet
 {
+    /// <summary>
+    /// Abstract class for the GPIO connector on the Pi (P1) (as found next to the yellow RCA video socket on the Rpi circuit board)
+    /// </summary>
     public abstract class GPIO : IDisposable
     {
-        /// <summary>
-        /// Abstract class for the GPIO connector on the Pi (P1) (as found next to the yellow RCA video socket on the Rpi circuit board)
-        /// </summary>
         /// <remarks>
         /// Refer to http://elinux.org/Rpi_Low-level_peripherals for diagram.
         /// P1-01 = bottom left, P1-02 = top left
@@ -18,8 +18,8 @@ namespace RaspberryPiDotNet
         ///                  P1-03 = GPIO0
         ///                  P1-05 = GPIO1
         ///                  P1-07 = GPIO4
-        ///                  P1-08 = GPIO14
-        ///                  P1-10 = GPIO15
+        ///                  P1-08 = GPIO14 - alt function (UART0_TXD) on boot-up
+        ///                  P1-10 = GPIO15 - alt function (UART0_TXD) on boot-up
         ///                  P1-11 = GPIO17
         ///                  P1-12 = GPIO18
         ///                  P1-13 = GPIO21
@@ -77,6 +77,11 @@ namespace RaspberryPiDotNet
         /// Specifies the direction of the GPIO port
         /// </summary>
         public enum DirectionEnum { IN, OUT };
+
+        /// <summary>
+        /// Dictionary that stores whether a pin is setup or not
+        /// </summary>
+        protected static Dictionary<int, DirectionEnum> _exportedPins = new Dictionary<int, DirectionEnum>();
 
         /// <summary>
         /// The currently assigned GPIO pin. Used for class methods and not static methods.

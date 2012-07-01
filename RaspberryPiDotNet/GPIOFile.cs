@@ -9,14 +9,15 @@ using System.IO;
 // Based on work done by x4m and britguy (http://www.raspberrypi.org/phpBB3/viewtopic.php?f=34&t=6720)
 namespace RaspberryPiDotNet
 {
+    /// <summary>
+    /// Raspberry Pi GPIO using the file-based access method.
+    /// </summary>
     public class GPIOFile : GPIO, IDisposable
     {
         /// <summary>
         /// The path on the Raspberry Pi for the GPIO interface
         /// </summary>
         private const string GPIO_PATH = "/sys/class/gpio/";
-
-        private static Dictionary<int, DirectionEnum> _exported = new Dictionary<int, DirectionEnum>();
 
         #region Constructor
         /// <summary>
@@ -67,14 +68,15 @@ namespace RaspberryPiDotNet
         private static void ExportPin(GPIOPins pin, DirectionEnum direction)
         {
             // If the pin is already exported, check it's in the proper direction
-            if (_exported.Keys.Contains((int)pin))
+            if (_exportedPins.Keys.Contains((int)pin))
                 // If the direction matches, return out of the function. If not, change the direction
-                if (_exported[(int)pin] == direction)
+                if (_exportedPins[(int)pin] == direction)
                     return;
                 else
                 {
+                    // Set the direction on the pin and update the exported list
                     File.WriteAllText(GPIO_PATH + "gpio" + GetGPIONumber(pin) + "/direction", direction.ToString().ToLower());
-                    _exported[(int)pin] = direction;
+                    _exportedPins[(int)pin] = direction;
                     return;
                 }
 
@@ -90,7 +92,7 @@ namespace RaspberryPiDotNet
             File.WriteAllText(GPIO_PATH + "gpio" + GetGPIONumber(pin) + "/direction", direction.ToString().ToLower());
 
             // Update the list of exported pins
-            _exported[(int)pin] = direction;
+            _exportedPins[(int)pin] = direction;
         }
 
         /// <summary>
@@ -103,7 +105,7 @@ namespace RaspberryPiDotNet
             File.WriteAllText(GPIO_PATH + "unexport", GetGPIONumber(pin));
 
             // Remove the pin from the list of exported pins
-            _exported.Remove((int)pin);
+            _exportedPins.Remove((int)pin);
         }
 
         /// <summary>
@@ -152,7 +154,7 @@ namespace RaspberryPiDotNet
         public static void CleanUp()
         {
             // Loop over all exported pins and unexported them
-            foreach (GPIOPins pin in _exported.Keys)
+            foreach (GPIOPins pin in _exportedPins.Keys)
             {
                 UnexportPin(pin);
             }
