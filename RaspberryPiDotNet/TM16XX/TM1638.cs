@@ -7,8 +7,8 @@ namespace RaspberryPiDotNet
 {
     public class TM1638 : TM16XX
     {
-        private byte TM1638_COLOR_RED = 1;
-        private byte TM1638_COLOR_GREEN = 2;
+        public readonly byte TM1638_COLOR_RED = 1;
+        public readonly byte TM1638_COLOR_GREEN = 2;
 
         public TM1638(GPIO data, GPIO clock, GPIO strobe, bool activateDisplay, byte intensity)
             : base(data, clock, strobe, 8, activateDisplay, intensity)
