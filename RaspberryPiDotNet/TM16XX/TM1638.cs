@@ -7,15 +7,18 @@ namespace RaspberryPiDotNet
 {
     public class TM1638 : TM16XX
     {
-        public readonly byte TM1638_COLOR_RED = 1;
-        public readonly byte TM1638_COLOR_GREEN = 2;
-
         public TM1638(GPIO data, GPIO clock, GPIO strobe, bool activateDisplay, byte intensity)
             : base(data, clock, strobe, 8, activateDisplay, intensity)
         {
         }
 
-        public void setDisplayToHexNumber(ulong number, byte dots, bool leadingZeros, byte[] numberFont)
+        public enum TM1638_LED_COLOR : byte
+        {
+            RED = 1,
+            GREEN = 2
+        };
+
+        public void setDisplayToHexNumber(ulong number, byte dots, bool leadingZeros)
         {
             for (int i = 0; i < _displays; i++)
             {
@@ -23,13 +26,13 @@ namespace RaspberryPiDotNet
                     clearDisplayDigit((byte)(_displays - i - 1), (dots & (1 << i)) != 0);
                 else
                 {
-                    setDisplayDigit((byte)(number & 0xF), (byte)(_displays - i - 1), (dots & (1 << i)) != 0, numberFont);
+                    setDisplayDigit((byte)(number & 0xF), (byte)(_displays - i - 1), (dots & (1 << i)) != 0);
                     number >>= 4;
                 }
             }
         }
 
-        public void setDisplayToDecNumberAt(ulong number, byte dots, byte startingPos, bool leadingZeros, byte[] numberFont)
+        public void setDisplayToDecNumberAt(ulong number, byte dots, byte startingPos, bool leadingZeros)
         {
             if (number > 99999999L)
                 setDisplayToError();
@@ -39,14 +42,14 @@ namespace RaspberryPiDotNet
                 {
                     if (number != 0)
                     {
-                        setDisplayDigit((byte)(number % 10), (byte)(_displays - i - 1), (dots & (1 << i)) != 0, numberFont);
+                        setDisplayDigit((byte)(number % 10), (byte)(_displays - i - 1), (dots & (1 << i)) != 0);
                         number /= 10;
                     }
                     else
                     {
                         if (leadingZeros)
                         {
-                            setDisplayDigit((byte)0, (byte)(_displays - i - 1), (dots & (1 << i)) != 0, numberFont);
+                            setDisplayDigit((byte)0, (byte)(_displays - i - 1), (dots & (1 << i)) != 0);
                         }
                         else
                         {
@@ -57,16 +60,16 @@ namespace RaspberryPiDotNet
             }
         }
 
-        public void setDisplayToDecNumber(ulong number, byte dots, bool leadingZeros, byte[] numberFont)
+        public void setDisplayToDecNumber(ulong number, byte dots, bool leadingZeros)
         {
-            setDisplayToDecNumberAt(number, dots, 0, leadingZeros, numberFont);
+            setDisplayToDecNumberAt(number, dots, 0, leadingZeros);
         }
 
-        public void setDisplayToSignedDecNumber(long number, byte dots, bool leadingZeros, byte[] numberFont)
+        public void setDisplayToSignedDecNumber(long number, byte dots, bool leadingZeros)
         {
             if (number >= 0)
             {
-                setDisplayToDecNumberAt((ulong)number, dots, 0, leadingZeros, numberFont);
+                setDisplayToDecNumberAt((ulong)number, dots, 0, leadingZeros);
             }
             else
             {
@@ -76,43 +79,23 @@ namespace RaspberryPiDotNet
                 }
                 else
                 {
-                    setDisplayToDecNumberAt((ulong)-number, dots, 1, leadingZeros, numberFont);
+                    setDisplayToDecNumberAt((ulong)-number, dots, 1, leadingZeros);
                     sendChar(0, (byte)charMap['-'], (dots & (0x80)) != 0);
                 }
             }
         }
 
-        public void setDisplayToBinNumber(byte number, byte dots, byte[] numberFont)
+        public void setDisplayToBinNumber(byte number, byte dots)
         {
             for (int i = 0; i < _displays; i++)
             {
-                setDisplayDigit((byte)((number & (1 << i)) == 0 ? 0 : 1), (byte)(_displays - i - 1), (dots & (1 << i)) != 0, numberFont);
+                setDisplayDigit((byte)((number & (1 << i)) == 0 ? 0 : 1), (byte)(_displays - i - 1), (dots & (1 << i)) != 0);
             }
         }
 
-        public void setLED(byte color, byte pos)
+        public void setLED(TM1638_LED_COLOR color, byte pos)
         {
-            sendData((byte)((pos << 1) + 1), color);
-        }
-
-        void setLEDs(ushort leds)
-        {
-            for (int i = 0; i < _displays; i++)
-            {
-                byte color = 0;
-
-                if ((leds & (1 << i)) != 0)
-                {
-                    color |= TM1638_COLOR_RED;
-                }
-
-                if ((leds & (1 << (i + 8))) != 0)
-                {
-                    color |= TM1638_COLOR_GREEN;
-                }
-
-                setLED(color, (byte)i);
-            }
+            sendData((byte)((pos << 1) + 1), (byte)color);
         }
 
         public byte getButtons()

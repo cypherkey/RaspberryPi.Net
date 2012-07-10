@@ -148,9 +148,11 @@ namespace RaspberryPiDotNet
             _strobe.Write(true);
         }
 
-        public void setDisplayDigit(byte digit, byte pos, bool dot, byte[] numberFont)
+        public void setDisplayDigit(byte digit, byte pos, bool dot)
         {
-            sendChar(pos, numberFont[digit & 0xF], dot);
+            char chr = Char.Parse(digit.ToString());
+            if (charMap.Keys.Contains(chr))
+                sendChar(pos, charMap[digit.ToString()[0]], dot);
         }
 
         public void setDisplayToError()
@@ -191,7 +193,7 @@ namespace RaspberryPiDotNet
             }
         }
 
-        public void setDisplayToString(string str, ushort dots, byte pos, byte[] font)
+        public void setDisplayToString(string str, ushort dots, byte pos)
         {
             int stringLength = str.Length;
 
