@@ -15,7 +15,18 @@ namespace RaspberryPiDotNet
         protected GPIO _strobe;
         protected int _displays;
 
-        public static Dictionary<char, byte> charMap = new Dictionary<char, byte>()
+        /// <summary>
+        /// The character map for the seven segment displays.
+        /// The bits are displayed by mapping bellow
+        ///  -- 0 --
+        /// |       |
+        /// 5       1
+        ///  -- 6 --
+        /// 4       2
+        /// |       |
+        ///  -- 3 --  .7
+        /// </summary>
+        public readonly static Dictionary<char, byte> charMap = new Dictionary<char, byte>()
         {
             { ' ', Convert.ToByte("00000000",2) },
             { '!', Convert.ToByte("10000110",2) },
@@ -137,6 +148,17 @@ namespace RaspberryPiDotNet
             _strobe.Write(true);
         }
 
+        public bool ActivateDisplay
+        {
+            set
+            {
+                if (value)
+                    sendCommand(0x88);
+                else
+                    sendCommand(0x80);
+            }
+        }
+        
         public void setupDisplay(bool active, int intensity)
         {
             sendCommand((byte)(0x80 | (active ? 8 : 0) | Math.Min(7, intensity)));
@@ -193,13 +215,18 @@ namespace RaspberryPiDotNet
             }
         }
 
-        public void setDisplayToString(string str, ushort dots, byte pos)
+        public void setDisplayToString(string str)
+        {
+            setDisplayToString(str, 0, 0);
+        }
+
+        public void setDisplayToString(string str, byte dots, byte pos)
         {
             int stringLength = str.Length;
 
             for (int i = 0; i < _displays - pos; i++)
                 if (i < stringLength)
-                    sendChar((byte)(i + (int)pos), (byte)(font[str[i] - 32]), (dots & (1 << (_displays - i - 1))) != 0);
+                    sendChar((byte)(i + (int)pos), (byte)(charMap[str[i]]), (dots & (1 << (_displays - i - 1))) != 0);
                 else
                     break;
         }

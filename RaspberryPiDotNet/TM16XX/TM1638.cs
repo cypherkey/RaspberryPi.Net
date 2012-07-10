@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+// This class is the base class for the TM1638/TM1640 board.
+// It is a port of the TM1638 library by Ricardo Batista
+// URL: http://code.google.com/p/tm1638-library/
 namespace RaspberryPiDotNet
 {
     public class TM1638 : TM16XX
@@ -20,16 +23,7 @@ namespace RaspberryPiDotNet
 
         public void setDisplayToHexNumber(ulong number, byte dots, bool leadingZeros)
         {
-            for (int i = 0; i < _displays; i++)
-            {
-                if (!leadingZeros && number == 0)
-                    clearDisplayDigit((byte)(_displays - i - 1), (dots & (1 << i)) != 0);
-                else
-                {
-                    setDisplayDigit((byte)(number & 0xF), (byte)(_displays - i - 1), (dots & (1 << i)) != 0);
-                    number >>= 4;
-                }
-            }
+            setDisplayToString(number.ToString("x").ToUpper());
         }
 
         public void setDisplayToDecNumberAt(ulong number, byte dots, byte startingPos, bool leadingZeros)
