@@ -129,7 +129,6 @@ namespace RaspberryPiDotNet
             ExportPin(pin, DirectionEnum.IN);
 
             uint value = bcm2835_gpio_lev((uint)pin);
-            Console.WriteLine("Value = " + value);
             bool returnValue = value == 0 ? false : true;
             Debug.WriteLine("input from pin " + pin + "/gpio " + (int)pin + ", value was " + returnValue);
 
