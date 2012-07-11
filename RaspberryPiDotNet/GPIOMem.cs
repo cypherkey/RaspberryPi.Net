@@ -90,13 +90,17 @@ namespace RaspberryPiDotNet
                 // If the direction matches, return out of the function. If not, change the direction
                 if (_exportedPins[(int)pin] == direction)
                     return;
-                else
-                {
-                    // Set the direction on the pin and update the exported list
-                    bcm2835_gpio_fsel((uint)pin, direction == DirectionEnum.IN ? (uint)0 : (uint)1);
-                    _exportedPins[(int)pin] = direction;
-                    return;
-                }
+
+            // Set the direction on the pin and update the exported list
+            // BCM2835_GPIO_FSEL_INPT = 0
+            // BCM2835_GPIO_FSEL_OUTP = 1
+            bcm2835_gpio_fsel((uint)pin, direction == DirectionEnum.IN ? (uint)0 : (uint)1);
+            if (direction == DirectionEnum.IN)
+                // BCM2835_GPIO_PUD_OFF = 0b00 = 0
+                // BCM2835_GPIO_PUD_DOWN = 0b01 = 1
+                // BCM2835_GPIO_PUD_UP = 0b10 = 2
+                bcm2835_gpio_set_pud((uint)pin, 0);
+            _exportedPins[(int)pin] = direction;
         }
 
         /// <summary>
@@ -125,6 +129,7 @@ namespace RaspberryPiDotNet
             ExportPin(pin, DirectionEnum.IN);
 
             uint value = bcm2835_gpio_lev((uint)pin);
+            Console.WriteLine("Value = " + value);
             bool returnValue = value == 0 ? false : true;
             Debug.WriteLine("input from pin " + pin + "/gpio " + (int)pin + ", value was " + returnValue);
 
@@ -169,8 +174,12 @@ namespace RaspberryPiDotNet
         [DllImport("libbcm2835.so", EntryPoint = "bcm2835_gpio_write")]
         static extern void bcm2835_gpio_write(uint pin, uint value);
 
-        [DllImport("libbcm2835.so", EntryPoint = "bcm2835_gpio_write")]
+        [DllImport("libbcm2835.so", EntryPoint = "bcm2835_gpio_lev")]
         static extern uint bcm2835_gpio_lev(uint pin);
+
+        [DllImport("libbcm2835.so", EntryPoint = "bcm2835_gpio_set_pud")]
+        static extern void bcm2835_gpio_set_pud(uint pin, uint pud);
+
         #endregion
     }
 }
