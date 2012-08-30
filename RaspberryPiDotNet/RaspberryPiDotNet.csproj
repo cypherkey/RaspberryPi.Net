@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="DS1620.cs" />
     <Compile Include="GPIO.cs" />
+    <Compile Include="GPIODebug.cs" />
     <Compile Include="GPIOFile.cs" />
     <Compile Include="GPIOMem.cs" />
     <Compile Include="MicroLiquidCrystal\RaspPiGPIOFileLcdTransferProvider.cs" />
