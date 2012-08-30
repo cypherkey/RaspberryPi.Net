@@ -18,6 +18,7 @@ namespace RaspberryPiDotNet
     ///    cd bcm2835-1.3/src
     ///    make libbcm2835.a
     ///    cc -shared bcm2835.o -o libbcm2835.so
+    /// Place the shared object in the same directory as the executable and other assemblies.
     /// </summary>
     public class GPIOMem : GPIO, IDisposable
     {
