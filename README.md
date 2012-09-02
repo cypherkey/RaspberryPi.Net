@@ -5,12 +5,15 @@ Introduction
 ------------
 The purpose of this library is to provide a Mono.NET interface to the GPIO pins
 on the Raspberry Pi. All of this code is written using Visual Studio 2010
-Express but the goal is to be fully compatible with Mono.
+Express but the goal is to be fully compatible with Mono. This library is
+written using .NET 4.0 therefore the latest version of Mono (2.10) is
+recommended. At the time of this update, the Raspbian wheezy 2012-07-15 image
+has Mono 2.10.8.1.
 
 The GPIO pins are best described
 [here](http://elinux.org/Rpi_Low-level_peripherals#General_Purpose_Input.2FOutput_.28GPIO.29).
 They can be accessed in 2 ways, either using the file-based I/O (GPIOFile.cs)
-or direct memory (GPIOMem.cs) using Mike McCauley''s BCM2835 library which is
+or direct memory (GPIOMem.cs) using Mike McCauley's BCM2835 library which is
 available [here](http://www.open.com.au/mikem/bcm2835/index.html). There is
 also a GPIODebug.cs class that can be used to test your application without a
 Raspberry Pi.
