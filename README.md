@@ -4,11 +4,11 @@ RaspberryPi.Net
 Introduction
 ------------
 The purpose of this library is to provide a Mono.NET interface to the GPIO pins
-on the Raspberry Pi. All of this code is written using Visual Studio 2010
+on the Raspberry Pi. All of this code was written using Visual Studio 2010
 Express but the goal is to be fully compatible with Mono. This library is
 written using .NET 4.0 therefore the latest version of Mono (2.10) is
 recommended. At the time of this update, the Raspbian wheezy 2012-07-15 image
-has Mono 2.10.8.1.
+installs Mono 2.10.8.1.
 
 The GPIO pins are best described
 [here](http://elinux.org/Rpi_Low-level_peripherals#General_Purpose_Input.2FOutput_.28GPIO.29).
@@ -20,15 +20,37 @@ Raspberry Pi.
 
 Here is a sample bit of code to blink an LED attached to pin 12
 ```C#
-GPIOMem led = new GPIOMem(GPIO.GPIOPins.Pin12);
-while(true)
+using System;
+using RaspberryPiDotNet;
+
+namespace Test
 {
-    led.Write(true);
-    System.Threading.Thread.Sleep(500);
-    led.Write(false);
-    System.Threading.Thread.Sleep(500);
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            GPIOMem led = new GPIOMem(GPIO.GPIOPins.Pin12);
+            while(true)
+            {
+                led.Write(true);
+                System.Threading.Thread.Sleep(500);
+                led.Write(false);
+                System.Threading.Thread.Sleep(500);
+            }
+        }
+    }
 }
 ```
+
+Installing Mono
+---------------
+To install Mono on your Raspberry Pi, run the following:
+```bash
+$ sudo aptitude update 
+$ sudo aptitude install mono-runtime
+```
+
+My preference is for aptitude, however, apt-get can also be used.
 
 Using GPIOMem
 -------------
