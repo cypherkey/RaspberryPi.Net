@@ -70,7 +70,8 @@ namespace RaspberryPiDotNet
             Pin22 = 25,
             Pin23 = 11,
             Pin24 = 8,
-            Pin26 = 7
+            Pin26 = 7,
+            LED = 16
         };
 
         /// <summary>
