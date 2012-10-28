@@ -90,3 +90,63 @@ lcd.Clear();
 lcd.SetCursorPosition(0, 0);
 lcd.Write("Hello World!");
 ```
+
+Using MCP3008
+-------------
+This class is a port of a Python Script by Mikey Sklar
+[here](https://raw.github.com/gist/3249416/7689f68f3ddbb74aceecda23e395c729668bd520/adafruit-cosm-temp.py).
+It provides analog to digital conversion to the Raspberry Pi.
+
+The following example shows how to connect an analog temperature sensor to the Pi.
+
+Example code:
+```C#
+using System;
+using System.Collections.Generic;
+using System.Text;
+using RaspberryPiDotNet;
+using System.Threading;
+
+namespace RPi_Temperature
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            //# set up the SPI interface pins
+            //# SPI port on the ADC to the Cobbler
+            GPIOMem SPICLK = new GPIOMem(GPIO.GPIOPins.GPIO18, GPIO.DirectionEnum.OUT);
+            GPIOMem SPIMISO = new GPIOMem(GPIO.GPIOPins.GPIO23, GPIO.DirectionEnum.IN);
+            GPIOMem SPIMOSI = new GPIOMem(GPIO.GPIOPins.GPIO24, GPIO.DirectionEnum.OUT);
+            GPIOMem SPICS = new GPIOMem(GPIO.GPIOPins.GPIO25, GPIO.DirectionEnum.OUT);
+
+            // temperature sensor connected to channel 0 of mcp3008
+            int adcnum = 0;
+            double read_adc0 = 0.0;
+
+            while (true)
+            {
+                MCP3008 MCP3008 = new MCP3008(adcnum, SPICLK, SPIMOSI, SPIMISO, SPICS);
+                // read the analog pin (temperature sensor LM35)
+                read_adc0 = MCP3008.AnalogToDigital;
+                double millivolts = Convert.ToDouble(read_adc0) * (3300.0 / 1024);
+
+                double volts = (Convert.ToDouble(read_adc0) / 1024.0f) * 3.3f;
+                double temp_C = ((millivolts - 100.0) / 10.0) - 40.0;
+                double temp_F = (temp_C * 9.0 / 5.0) + 32;
+
+#if DEBUG
+                System.Console.WriteLine("MCP3008_Channel: " + adcnum);
+                System.Console.WriteLine("read_adc0: " + read_adc0);
+                System.Console.WriteLine("millivolts: " + (float)millivolts);
+                System.Console.WriteLine("tempC: " + (float)temp_C);
+                System.Console.WriteLine("tempF: " + (float)temp_F);
+                System.Console.WriteLine("volts: " + (float)volts);
+				System.Console.WriteLine("\n");				
+#endif
+                Thread.Sleep(3000);
+            }
+        }
+    }
+}
+```
