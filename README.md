@@ -142,7 +142,11 @@ namespace RPi_Temperature
                 System.Console.WriteLine("tempC: " + (float)temp_C);
                 System.Console.WriteLine("tempF: " + (float)temp_F);
                 System.Console.WriteLine("volts: " + (float)volts);
-				System.Console.WriteLine("\n");				
+		//The following line makes the trick on Raspberry Pi for displaying DateTime.Now
+		//equivalent.
+		Console.WriteLine("Date time stamp: {0}/{1}/{2} {3}:{4}:{5}",now.Month,now.Day,now.Year,
+		                  now.Hour,now.Minute,now.Second);
+		System.Console.WriteLine("\n");
 #endif
                 Thread.Sleep(3000);
             }
