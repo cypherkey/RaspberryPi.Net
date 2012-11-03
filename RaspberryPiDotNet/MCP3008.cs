@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-// Original author: Mikey Sklar - https://gist.github.com/3151375
+// Original author: Mikey Sklar - git://gist.github.com/3249416.git
 // Adafruit article: http://learn.adafruit.com/reading-a-analog-in-and-controlling-audio-volume-with-the-raspberry-pi
 // Ported from python and modified by: Gilberto Garcia <ferraripr@gmail.com>; twitter: @ferraripr
 namespace RaspberryPiDotNet
