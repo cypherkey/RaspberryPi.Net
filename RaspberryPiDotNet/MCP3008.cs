@@ -15,10 +15,10 @@ namespace RaspberryPiDotNet
     public class MCP3008
     {
         private int adcnum;
-        private GPIOMem clockpin;
-        private GPIOMem mosipin;
-        private GPIOMem misopin;
-        private GPIOMem cspin;
+        private GPIO clockpin;
+        private GPIO mosipin;
+        private GPIO misopin;
+        private GPIO cspin;
 
         /// <summary>
         /// Connect MCP3008 with clock, Serial Peripheral Interface(SPI) and channel
@@ -28,7 +28,7 @@ namespace RaspberryPiDotNet
         /// <param name="SPIMOSI">SPI Master Output, Slave Input (MOSI)</param>
         /// <param name="SPIMISO">SPI Master Input, Slave Output (MISO)</param>
         /// <param name="SPICS">SPI Chip Select</param>
-        public MCP3008(int adc_channel, GPIOMem SPICLK, GPIOMem SPIMOSI, GPIOMem SPIMISO, GPIOMem SPICS)
+        public MCP3008(int adc_channel, GPIO SPICLK, GPIO SPIMOSI, GPIO SPIMISO, GPIO SPICS)
         {
             adcnum = adc_channel;
             clockpin = SPICLK;
