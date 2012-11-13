@@ -47,6 +47,7 @@
     <Compile Include="GPIODebug.cs" />
     <Compile Include="GPIOFile.cs" />
     <Compile Include="GPIOMem.cs" />
+    <Compile Include="MCP3008.cs" />
     <Compile Include="MicroLiquidCrystal\RaspPiGPIOFileLcdTransferProvider.cs" />
     <Compile Include="MicroLiquidCrystal\RaspPiGPIOMemLcdTransferProvider.cs" />
     <Compile Include="MicroLiquidCrystal\ILcdTransferProvider.cs" />
