@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 // This class is the base class for the TM1638/TM1640 board.
 // It is a port of the TM1638 library by Ricardo Batista
@@ -173,7 +171,7 @@ namespace RaspberryPiDotNet
         public void setDisplayDigit(byte digit, byte pos, bool dot)
         {
             char chr = Char.Parse(digit.ToString());
-            if (charMap.Keys.Contains(chr))
+            if (charMap.ContainsKey(chr))
                 sendChar(pos, charMap[digit.ToString()[0]], dot);
         }
 

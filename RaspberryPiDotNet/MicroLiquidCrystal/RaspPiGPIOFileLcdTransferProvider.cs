@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 // Code modified from original - GPIOLcdTransferProvider.cs
 // Original code uses license:
@@ -22,19 +19,19 @@ namespace RaspberryPiDotNet.MicroLiquidCrystal
         private readonly bool _fourBitMode;
         private bool _disposed;
 
-        public RaspPiGPIOFileLcdTransferProvider(GPIOFile.GPIOPins rs, GPIOFile.GPIOPins enable, GPIOFile.GPIOPins d4, GPIOFile.GPIOPins d5, GPIOFile.GPIOPins d6, GPIOFile.GPIOPins d7)
-            : this(true, rs, GPIOFile.GPIOPins.GPIO_NONE, enable, GPIOFile.GPIOPins.GPIO_NONE, GPIOFile.GPIOPins.GPIO_NONE, GPIOFile.GPIOPins.GPIO_NONE, GPIOFile.GPIOPins.GPIO_NONE, d4, d5, d6, d7)
+        public RaspPiGPIOFileLcdTransferProvider(GPIOPins rs, GPIOPins enable, GPIOPins d4, GPIOPins d5, GPIOPins d6, GPIOPins d7)
+            : this(true, rs, GPIOPins.GPIO_NONE, enable, GPIOPins.GPIO_NONE, GPIOPins.GPIO_NONE, GPIOPins.GPIO_NONE, GPIOPins.GPIO_NONE, d4, d5, d6, d7)
         { }
 
-        public RaspPiGPIOFileLcdTransferProvider(GPIOFile.GPIOPins rs, GPIOFile.GPIOPins rw, GPIOFile.GPIOPins enable, GPIOFile.GPIOPins d4, GPIOFile.GPIOPins d5, GPIOFile.GPIOPins d6, GPIOFile.GPIOPins d7)
-            : this(true, rs, rw, enable, GPIOFile.GPIOPins.GPIO_NONE, GPIOFile.GPIOPins.GPIO_NONE, GPIOFile.GPIOPins.GPIO_NONE, GPIOFile.GPIOPins.GPIO_NONE, d4, d5, d6, d7)
+        public RaspPiGPIOFileLcdTransferProvider(GPIOPins rs, GPIOPins rw, GPIOPins enable, GPIOPins d4, GPIOPins d5, GPIOPins d6, GPIOPins d7)
+            : this(true, rs, rw, enable, GPIOPins.GPIO_NONE, GPIOPins.GPIO_NONE, GPIOPins.GPIO_NONE, GPIOPins.GPIO_NONE, d4, d5, d6, d7)
         { }
 
-        public RaspPiGPIOFileLcdTransferProvider(GPIOFile.GPIOPins rs, GPIOFile.GPIOPins enable, GPIOFile.GPIOPins d0, GPIOFile.GPIOPins d1, GPIOFile.GPIOPins d2, GPIOFile.GPIOPins d3, GPIOFile.GPIOPins d4, GPIOFile.GPIOPins d5, GPIOFile.GPIOPins d6, GPIOFile.GPIOPins d7)
-            : this(false, rs, GPIOFile.GPIOPins.GPIO_NONE, enable, d0, d1, d2, d3, d4, d5, d6, d7)
+        public RaspPiGPIOFileLcdTransferProvider(GPIOPins rs, GPIOPins enable, GPIOPins d0, GPIOPins d1, GPIOPins d2, GPIOPins d3, GPIOPins d4, GPIOPins d5, GPIOPins d6, GPIOPins d7)
+            : this(false, rs, GPIOPins.GPIO_NONE, enable, d0, d1, d2, d3, d4, d5, d6, d7)
         { }
 
-        public RaspPiGPIOFileLcdTransferProvider(GPIOFile.GPIOPins rs, GPIOFile.GPIOPins rw, GPIOFile.GPIOPins enable, GPIOFile.GPIOPins d0, GPIOFile.GPIOPins d1, GPIOFile.GPIOPins d2, GPIOFile.GPIOPins d3, GPIOFile.GPIOPins d4, GPIOFile.GPIOPins d5, GPIOFile.GPIOPins d6, GPIOFile.GPIOPins d7)
+        public RaspPiGPIOFileLcdTransferProvider(GPIOPins rs, GPIOPins rw, GPIOPins enable, GPIOPins d0, GPIOPins d1, GPIOPins d2, GPIOPins d3, GPIOPins d4, GPIOPins d5, GPIOPins d6, GPIOPins d7)
             : this(false, rs, rw, enable, d0, d1, d2, d3, d4, d5, d6, d7)
         { }
 
@@ -53,27 +50,27 @@ namespace RaspberryPiDotNet.MicroLiquidCrystal
         /// <param name="d5"></param>
         /// <param name="d6"></param>
         /// <param name="d7"></param>
-        public RaspPiGPIOFileLcdTransferProvider(bool fourBitMode, GPIOFile.GPIOPins rs, GPIOFile.GPIOPins rw, GPIOFile.GPIOPins enable, 
-                                                 GPIOFile.GPIOPins d0, GPIOFile.GPIOPins d1, GPIOFile.GPIOPins d2, GPIOFile.GPIOPins d3, 
-                                                 GPIOFile.GPIOPins d4, GPIOFile.GPIOPins d5, GPIOFile.GPIOPins d6, GPIOFile.GPIOPins d7)
+        public RaspPiGPIOFileLcdTransferProvider(bool fourBitMode, GPIOPins rs, GPIOPins rw, GPIOPins enable, 
+                                                 GPIOPins d0, GPIOPins d1, GPIOPins d2, GPIOPins d3, 
+                                                 GPIOPins d4, GPIOPins d5, GPIOPins d6, GPIOPins d7)
         {
             _fourBitMode = fourBitMode;
 
-            if (rs == GPIOFile.GPIOPins.GPIO_NONE) throw new ArgumentException("rs");
+            if (rs == GPIOPins.GPIO_NONE) throw new ArgumentException("rs");
             _rsPort = new GPIOFile(rs);
 
             // we can save 1 pin by not using RW. Indicate by passing GPIO.GPIOPins.GPIO_NONE instead of pin#
-            if (rw != GPIOFile.GPIOPins.GPIO_NONE) // (RW is optional)
+            if (rw != GPIOPins.GPIO_NONE) // (RW is optional)
                 _rwPort = new GPIOFile(rw);
 
-            if (enable == GPIOFile.GPIOPins.GPIO_NONE) throw new ArgumentException("enable");
+            if (enable == GPIOPins.GPIO_NONE) throw new ArgumentException("enable");
             _enablePort = new GPIOFile(enable);
 
             var dataPins = new[] { d0, d1, d2, d3, d4, d5, d6, d7};
             _dataPorts = new GPIOFile[8];
             for (int i = 0; i < 8; i++)
             {
-                if (dataPins[i] != GPIOFile.GPIOPins.GPIO_NONE)
+                if (dataPins[i] != GPIOPins.GPIO_NONE)
                     _dataPorts[i] = new GPIOFile(dataPins[i]);
             }
         }

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 // This class is the base class for the TM1638/TM1640 board.
 // It is a port of the TM1638 library by Ricardo Batista

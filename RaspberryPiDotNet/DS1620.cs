@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 
 // Derived based on work done by AdamS at http://forums.netduino.com/index.php?/topic/3335-netduino-plus-and-ds1620-anyone/page__view__findpost__p__22972

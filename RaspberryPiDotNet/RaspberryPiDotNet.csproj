@@ -10,8 +10,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>RaspberryPiDotNet</RootNamespace>
     <AssemblyName>RaspberryPiDotNet</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,19 +35,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DS1620.cs" />
     <Compile Include="GPIO.cs" />
     <Compile Include="GPIODebug.cs" />
+    <Compile Include="GPIODirection.cs" />
     <Compile Include="GPIOFile.cs" />
     <Compile Include="GPIOMem.cs" />
+    <Compile Include="GPIOPins.cs" />
     <Compile Include="MCP3008.cs" />
     <Compile Include="MicroLiquidCrystal\RaspPiGPIOFileLcdTransferProvider.cs" />
     <Compile Include="MicroLiquidCrystal\RaspPiGPIOMemLcdTransferProvider.cs" />

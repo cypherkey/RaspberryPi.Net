@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace RaspberryPiDotNet
 {
     /// <summary>
     /// Raspberry Pi GPIO debug class.
     /// </summary>
-    public class GPIODebug : GPIO, IDisposable
+    public class GPIODebug : GPIO
     {
         private bool _currentValue = false;
 
@@ -18,7 +15,7 @@ namespace RaspberryPiDotNet
         /// </summary>
         /// <param name="pin">The GPIO pin</param>
         public GPIODebug(GPIOPins pin)
-            : base(pin,DirectionEnum.OUT,false)
+            : this(pin,GPIODirection.Out,false)
         {
         }
 
@@ -27,8 +24,8 @@ namespace RaspberryPiDotNet
         /// </summary>
         /// <param name="pin">The GPIO pin</param>
         /// <param name="direction">Direction</param>
-        public GPIODebug(GPIOPins pin, DirectionEnum direction)
-            : base(pin, direction, false)
+        public GPIODebug(GPIOPins pin, GPIODirection direction)
+            : this(pin, direction, false)
         {
         }
 
@@ -38,51 +35,8 @@ namespace RaspberryPiDotNet
         /// <param name="pin">The GPIO pin</param>
         /// <param name="direction">Direction</param>
         /// <param name="initialValue">Initial Value</param>
-        public GPIODebug(GPIOPins pin, DirectionEnum direction, bool initialValue)
+        public GPIODebug(GPIOPins pin, GPIODirection direction, bool initialValue)
             : base(pin, direction, initialValue)
-        {
-            Write(pin, initialValue);
-        }
-        #endregion
-
-        #region Static Methods
-        /// <summary>
-        /// Export the GPIO setting the direction. This creates the /sys/class/gpio/gpioXX directory.
-        /// </summary>
-        /// <param name="pin">The GPIO pin</param>
-        /// <param name="direction"></param>
-        private static void ExportPin(GPIOPins pin, DirectionEnum direction)
-        {
-        }
-
-        /// <summary>
-        /// Unexport the GPIO. This removes the /sys/class/gpio/gpioXX directory.
-        /// </summary>
-        /// <param name="pin">The pin to unexport</param>
-        private static void UnexportPin(GPIOPins pin)
-        {
-        }
-
-        /// <summary>
-        /// Static method to write a value to the specified pin. Does nothing when using the GPIODebug class.
-        /// </summary>
-        /// <param name="pin">The GPIO pin</param>
-        /// <param name="value">The value to write to the pin</param>
-        public static void Write(GPIOPins pin, bool value)
-        {
-        }
-
-        /// <summary>
-        /// Static method to read a value to the specified pin. Always returns false when using the GPIODebug class.
-        /// </summary>
-        /// <param name="pin">The GPIO pin</param>
-        /// <returns>The value read from the pin</returns>
-        public static bool Read(GPIOPins pin)
-        {
-            return false;
-        }
-
-        public static void CleanUp()
         {
         }
         #endregion
@@ -94,7 +48,9 @@ namespace RaspberryPiDotNet
         /// <param name="value">The value to write to the pin</param>
         public override void Write(bool value)
         {
-            _currentValue = value;
+			System.Diagnostics.Debug.WriteLine("GPIO pin " + _pin + " set to " + value);
+			base.Write(value);
+			_currentValue = value;
         }
 
         /// <summary>
@@ -103,6 +59,8 @@ namespace RaspberryPiDotNet
         /// <returns>The value read from the pin</returns>
         public override bool Read()
         {
+			System.Diagnostics.Debug.WriteLine("GPIO pin " + _pin + " reads as " + _currentValue);
+			base.Read();
             return _currentValue;
         }
 
@@ -111,7 +69,7 @@ namespace RaspberryPiDotNet
         /// </summary>
         public override void Dispose()
         {
-            UnexportPin(_pin);
+			base.Dispose();
         }
         #endregion
     }
