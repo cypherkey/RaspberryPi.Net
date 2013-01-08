@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-// Micro Liquid Crystal Library
+﻿// Micro Liquid Crystal Library
 // http://microliquidcrystal.codeplex.com
 // Appache License Version 2.0
 
