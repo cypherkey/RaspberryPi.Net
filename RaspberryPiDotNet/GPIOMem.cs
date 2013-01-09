@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace RaspberryPiDotNet
 {
@@ -20,17 +17,24 @@ namespace RaspberryPiDotNet
     ///    cc -shared bcm2835.o -o libbcm2835.so
     /// Place the shared object in the same directory as the executable and other assemblies.
     /// </summary>
-    public class GPIOMem : GPIO, IDisposable
+    public class GPIOMem : GPIO
     {
-        private static bool _initialized = false;
+		#region Static Constructor
+		static GPIOMem()
+		{
+            // initialize the mapped memory
+			if (!bcm2835_init())
+				throw new Exception("Unable to initialize bcm2835.so library");
+		}
+		#endregion
 
-        #region Constructor
-        /// <summary>
+		#region Constructor
+		/// <summary>
         /// Access to the specified GPIO setup as an output port with an initial value of false (0)
         /// </summary>
         /// <param name="pin">The GPIO pin</param>
         public GPIOMem(GPIOPins pin)
-            : base(pin,DirectionEnum.OUT,false)
+            : this(pin,GPIODirection.Out,false)
         {
         }
 
@@ -39,10 +43,9 @@ namespace RaspberryPiDotNet
         /// </summary>
         /// <param name="pin">The GPIO pin</param>
         /// <param name="direction">Direction</param>
-        public GPIOMem(GPIOPins pin, DirectionEnum direction)
-            : base(pin, direction, false)
+        public GPIOMem(GPIOPins pin, GPIODirection direction)
+            : this(pin, direction, false)
         {
-            ExportPin(pin, direction);
         }
 
         /// <summary>
@@ -51,91 +54,39 @@ namespace RaspberryPiDotNet
         /// <param name="pin">The GPIO pin</param>
         /// <param name="direction">Direction</param>
         /// <param name="initialValue">Initial Value</param>
-        public GPIOMem(GPIOPins pin, DirectionEnum direction, bool initialValue)
+        public GPIOMem(GPIOPins pin, GPIODirection direction, bool initialValue)
             : base(pin, direction, initialValue)
         {
-            ExportPin(pin, direction);
-            Write(pin, initialValue);
         }
         #endregion
 
-        #region Static Methods
-        /// <summary>
-        /// Initialize the memory access to the GPIO
-        /// </summary>
-        /// <returns></returns>
-        private static bool Initialize()
-        {
-            int ret = 1;
-            if (!_initialized)
-            {
-                // initialize the mapped memory
-                ret = bcm2835_init();
-                _initialized = true;
-            }
+		#region Properties
 
-            return ret == 0 ? false : true;
-        }
+		/// <summary>
+		/// Gets or sets the communication direction for this pin
+		/// </summary>
+		public override GPIODirection PinDirection
+		{
+			get
+			{
+				return base.PinDirection;
+			}
+			set
+			{
+				if (PinDirection != (base.PinDirection = value)) // Left to right eval ensures base class gets to check for disposed object access
+				{
+					// Set the direction on the pin
+					bcm2835_gpio_fsel(_pin, value == GPIODirection.Out);
+					if (value == GPIODirection.In)
+						// BCM2835_GPIO_PUD_OFF = 0b00 = 0
+						// BCM2835_GPIO_PUD_DOWN = 0b01 = 1
+						// BCM2835_GPIO_PUD_UP = 0b10 = 2
+						bcm2835_gpio_set_pud(_pin, 0);
+				}
+			}
+		}
 
-        /// <summary>
-        /// Export the GPIO setting the direction. This creates the /sys/class/gpio/gpioXX directory.
-        /// </summary>
-        /// <param name="pin">The GPIO pin</param>
-        /// <param name="direction"></param>
-        private static void ExportPin(GPIOPins pin, DirectionEnum direction)
-        {
-            Initialize();
-
-            // If the pin is already exported, check it's in the proper direction
-            if (_exportedPins.Keys.Contains((int)pin))
-                // If the direction matches, return out of the function. If not, change the direction
-                if (_exportedPins[(int)pin] == direction)
-                    return;
-
-            // Set the direction on the pin and update the exported list
-            // BCM2835_GPIO_FSEL_INPT = 0
-            // BCM2835_GPIO_FSEL_OUTP = 1
-            bcm2835_gpio_fsel((uint)pin, direction == DirectionEnum.IN ? (uint)0 : (uint)1);
-            if (direction == DirectionEnum.IN)
-                // BCM2835_GPIO_PUD_OFF = 0b00 = 0
-                // BCM2835_GPIO_PUD_DOWN = 0b01 = 1
-                // BCM2835_GPIO_PUD_UP = 0b10 = 2
-                bcm2835_gpio_set_pud((uint)pin, 0);
-            _exportedPins[(int)pin] = direction;
-        }
-
-        /// <summary>
-        /// Static method to write a value to the specified pin.
-        /// </summary>
-        /// <param name="pin">The GPIO pin</param>
-        /// <param name="value">The value to write to the pin</param>
-        public static void Write(GPIOPins pin, bool value)
-        {
-            if (pin == GPIOPins.GPIO_NONE)
-                return;
-
-            ExportPin(pin, DirectionEnum.OUT);
-
-            bcm2835_gpio_write((uint)pin, value ? (uint)1 : (uint)0);
-            Debug.WriteLine("output to pin " + pin + "/gpio " + (int)pin + ", value was " + value);
-        }
-
-        /// <summary>
-        /// Static method to read a value to the specified pin.
-        /// </summary>
-        /// <param name="pin">The GPIO pin</param>
-        /// <returns>The value read from the pin</returns>
-        public static bool Read(GPIOPins pin)
-        {
-            ExportPin(pin, DirectionEnum.IN);
-
-            uint value = bcm2835_gpio_lev((uint)pin);
-            bool returnValue = value == 0 ? false : true;
-            Debug.WriteLine("input from pin " + pin + "/gpio " + (int)pin + ", value was " + returnValue);
-
-            return returnValue;
-        }
-        #endregion
+		#endregion
 
         #region Class Methods
         /// <summary>
@@ -144,7 +95,8 @@ namespace RaspberryPiDotNet
         /// <param name="value">The value to write to the pin</param>
         public override void Write(bool value)
         {
-            Write(_pin, value);
+			base.Write(value);
+            bcm2835_gpio_write(_pin, value);
         }
 
         /// <summary>
@@ -153,32 +105,26 @@ namespace RaspberryPiDotNet
         /// <returns>The value read from the pin</returns>
         public override bool Read()
         {
-            return Read(_pin);
-        }
-
-        /// <summary>
-        /// Dispose of the GPIO pin
-        /// </summary>
-        public override void Dispose()
-        {
+			base.Read();
+            return bcm2835_gpio_lev(_pin);
         }
         #endregion
 
         #region Imported functions
         [DllImport("libbcm2835.so", EntryPoint = "bcm2835_init")]
-        static extern int bcm2835_init();
+		static extern bool bcm2835_init();
 
         [DllImport("libbcm2835.so", EntryPoint = "bcm2835_gpio_fsel")]
-        static extern void bcm2835_gpio_fsel(uint pin, uint mode);
+        static extern void bcm2835_gpio_fsel(GPIOPins pin, bool mode_out); 
 
         [DllImport("libbcm2835.so", EntryPoint = "bcm2835_gpio_write")]
-        static extern void bcm2835_gpio_write(uint pin, uint value);
+        static extern void bcm2835_gpio_write(GPIOPins pin, bool value);
 
         [DllImport("libbcm2835.so", EntryPoint = "bcm2835_gpio_lev")]
-        static extern uint bcm2835_gpio_lev(uint pin);
+        static extern bool bcm2835_gpio_lev(GPIOPins pin);
 
         [DllImport("libbcm2835.so", EntryPoint = "bcm2835_gpio_set_pud")]
-        static extern void bcm2835_gpio_set_pud(uint pin, uint pud);
+        static extern void bcm2835_gpio_set_pud(GPIOPins pin, uint pud);
 
         #endregion
     }

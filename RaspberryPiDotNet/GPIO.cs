@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 // Author: Aaron Anderson <aanderson@netopia.ca>
 namespace RaspberryPiDotNet
@@ -11,108 +9,64 @@ namespace RaspberryPiDotNet
     /// </summary>
     public abstract class GPIO : IDisposable
     {
-        /// <remarks>
-        /// Refer to http://elinux.org/Rpi_Low-level_peripherals for diagram.
-        /// P1-01 = bottom left, P1-02 = top left
-        /// pi connector P1 pin    = GPIOnum
-        ///                  P1-03 = GPIO0
-        ///                  P1-05 = GPIO1
-        ///                  P1-07 = GPIO4
-        ///                  P1-08 = GPIO14 - alt function (UART0_TXD) on boot-up
-        ///                  P1-10 = GPIO15 - alt function (UART0_TXD) on boot-up
-        ///                  P1-11 = GPIO17
-        ///                  P1-12 = GPIO18
-        ///                  P1-13 = GPIO21
-        ///                  P1-15 = GPIO22
-        ///                  P1-16 = GPIO23
-        ///                  P1-18 = GPIO24
-        ///                  P1-19 = GPIO10
-        ///                  P1-21 = GPIO9
-        ///                  P1-22 = GPIO25
-        ///                  P1-23 = GPIO11
-        ///                  P1-24 = GPIO8
-        ///                  P1-26 = GPIO7
-        /// So to turn on Pin7 on the GPIO connector, pass in enumGPIOPIN.gpio4 as the pin parameter
-        /// </remarks>
-        public enum GPIOPins
-        {
-            GPIO_NONE = -1,
-            GPIO00 = 0,
-            GPIO02_REV2 = 2,
-            GPIO03_REV2 = 3,
-            GPIO01 = 1,
-            GPIO04 = 4,
-            GPIO07 = 7,
-            GPIO08 = 8,
-            GPIO09 = 9,
-            GPIO10 = 10,
-            GPIO11 = 11,
-            GPIO14 = 14,
-            GPIO15 = 15,
-            GPIO17 = 17,
-            GPIO18 = 18,
-            GPIO21 = 21,
-            GPIO22 = 22,
-            GPIO23 = 23,
-            GPIO24 = 24,
-            GPIO25 = 25,
-            GPIO27_REV2 = 27,
-            Pin03 = 0,
-            Pin03_REV2 = 2,
-            Pin05 = 1,
-            Pin05_REV2 = 3,
-            Pin07 = 4,
-            Pin08 = 14,
-            Pin10 = 15,
-            Pin11 = 17,
-            Pin12 = 18,
-            Pin13 = 21,
-            Pin13_REV2 = 27,
-            Pin15 = 22,
-            Pin16 = 23,
-            Pin18 = 24,
-            Pin19 = 10,
-            Pin21 = 9,
-            Pin22 = 25,
-            Pin23 = 11,
-            Pin24 = 8,
-            Pin26 = 7,
-            LED = 16
-        };
+        /// <summary>
+        /// Dictionary that stores created (exported) pins that where not disposed.
+        /// </summary>
+        private static Dictionary<GPIOPins, GPIO> _exportedPins = new Dictionary<GPIOPins, GPIO>();
 
         /// <summary>
-        /// Specifies the direction of the GPIO port
+        /// The currently assigned GPIO pin. Used for class methods.
         /// </summary>
-        public enum DirectionEnum { IN, OUT };
+        protected readonly GPIOPins _pin;
 
-        /// <summary>
-        /// Dictionary that stores whether a pin is setup or not
-        /// </summary>
-        protected static Dictionary<int, DirectionEnum> _exportedPins = new Dictionary<int, DirectionEnum>();
+		/// <summary>
+		/// Variable to track the disposed state
+		/// </summary>
+		private bool _disposed = false;
+		private GPIODirection _direction;
 
-        /// <summary>
-        /// The currently assigned GPIO pin. Used for class methods and not static methods.
-        /// </summary>
-        protected GPIOPins _pin;
+		/// <summary>
+		/// Gets the pin that this GPIO instance represents
+		/// </summary>
+		public GPIOPins Pin
+		{
+			get
+			{
+				if (_disposed)
+					throw new ObjectDisposedException(string.Empty);
+				return _pin;
+			}
+		}
+		
+		/// <summary>
+		/// Gets or sets the communication direction for this pin
+		/// </summary>
+		public virtual GPIODirection PinDirection
+		{
+			get
+			{
+				if (_disposed)
+					throw new ObjectDisposedException(string.Empty);
+				return _direction;
+			}
+			set
+			{
+				if (_disposed)
+					throw new ObjectDisposedException(string.Empty);
+				_direction = value;
+			}
+		}
 
-        /// <summary>
-        /// Access to the specified GPIO setup as an output port with an initial value of false (0)
-        /// </summary>
-        /// <param name="pin">The GPIO pin</param>
-        public GPIO(GPIOPins pin)
-            : this(pin,DirectionEnum.OUT,false)
-        {
-        }
-
-        /// <summary>
-        /// Access to the specified GPIO setup with the specified direction with an initial value of false (0)
-        /// </summary>
-        /// <param name="pin">The GPIO pin</param>
-        /// <param name="direction">Direction</param>
-        public GPIO(GPIOPins pin, DirectionEnum direction)
-            : this(pin, direction, false)
-        {
-        }
+		/// <summary>
+		/// Gets the disposal state of this GPIO instance
+		/// </summary>
+		public bool IsDisposed
+		{
+			get
+			{
+				return _disposed;
+			}
+		}
 
         /// <summary>
         /// Access to the specified GPIO setup with the specified direction with the specified initial value
@@ -120,31 +74,152 @@ namespace RaspberryPiDotNet
         /// <param name="pin">The GPIO pin</param>
         /// <param name="direction">Direction</param>
         /// <param name="initialValue">Initial Value</param>
-        public GPIO(GPIOPins pin, DirectionEnum direction, bool initialValue)
+        protected GPIO(GPIOPins pin, GPIODirection direction, bool initialValue)
         {
-            this._pin = pin;
+			lock (_exportedPins)
+			{
+				if (_exportedPins.ContainsKey(pin))
+					throw new Exception("Cannot use pin with multiple instances. Unexport the previous instance with Dispose() first! (pin " + (uint)pin + ")");
+				_exportedPins[pin] = this;
+
+				_pin = pin;
+				try
+				{
+					PinDirection = direction;
+					Write(initialValue);
+				}
+				catch
+				{
+					Dispose();
+					throw;
+				}
+			}
         }
 
-        protected static string GetGPIONumber(GPIOPins pin)
+		/// <summary>
+		/// Finalizer to make sure we cleanup after ourselves.
+		/// </summary>
+        ~GPIO()
         {
-            return ((int)pin).ToString(); //e.g. returns 17 for enum value of gpio17
+			if (!_disposed)
+				Dispose();
         }
+
+		/// <summary>
+		/// Sets a pin to output the give value.
+		/// 
+		/// Creates (exports) the pin if needed, and sets it to Out direction.
+		/// </summary>
+		/// <param name="pin">The pin who's value to set</param>
+		/// <param name="value">The value to set</param>
+		public static void Write(GPIOPins pin, bool value)
+		{
+			CreatePin(pin, GPIODirection.Out).Write(value);
+		}
+
+		/// <summary>
+		/// Gets the value of a given pin.
+		/// 
+		/// Creates (exports) the pin if needed, and sets it to In direction.
+		/// </summary>
+		/// <param name="pin">The pin who's value to get</param>
+		/// <returns>The value of the pin</returns>
+		public static bool Read(GPIOPins pin)
+		{
+			return CreatePin(pin, GPIODirection.In).Read();
+		}
+
+		/// <summary>
+		/// Creates a pin if it has not already been created (exported), creates a GPIOMem if possible, otherwise falls back to GPIOFile.
+		/// </summary>
+		/// <param name="pin">The pin to create or export</param>
+		/// <param name="dir">The direction the pin is to have</param>
+		/// <returns>The GPIO instance representing the pin</returns>
+		public static GPIO CreatePin(GPIOPins pin, GPIODirection dir)
+		{
+			lock (_exportedPins)
+				if (_exportedPins.ContainsKey(pin))
+				{
+					if (_exportedPins[pin].PinDirection != dir)
+						_exportedPins[pin].PinDirection = dir;
+					return _exportedPins[pin];
+				}
+
+			try
+			{
+				return new GPIOMem(pin, dir);
+			}
+#if DEBUG
+			catch (Exception e)
+			{
+				System.Diagnostics.Debug.WriteLine("Unable to create pin " + (uint)pin + " as GPIOMem because: " + e.ToString());
+			}
+#else
+			catch //stuff like lib load problems, wrong exports, etc...
+			{
+			}
+#endif
+			try
+			{
+				return new GPIOFile(pin, dir);
+			}
+#if DEBUG
+			catch (Exception e)
+			{
+				System.Diagnostics.Debug.WriteLine("Unable to create pin " + (uint)pin + " as GPIOFile because: " + e.ToString());
+			}
+#else
+			catch //stuff like GPIO Sys FS does not exist or is not responding, open by another process, etc...
+			{
+			}
+#endif
+
+#if DEBUG
+			System.Diagnostics.Debug.WriteLine("Using debug GPIO pin for pin number " + (uint)pin);
+			return new GPIODebug(pin, dir);
+#else
+			throw new Exception("Cannot access GPIO pin " + (uint)pin + ". Make sure libbcm2835.so is accessible, or that GPIO SYSFS is working and not in use by another process");
+#endif
+		}
 
         /// <summary>
         /// Write a value to the pin
         /// </summary>
         /// <param name="value">The value to write to the pin</param>
-        public abstract void Write(bool value);
+		public virtual void Write(bool value)
+		{
+			if (IsDisposed)
+				throw new ObjectDisposedException(string.Empty);
+			if (_direction != GPIODirection.Out)
+				PinDirection = GPIODirection.Out;
+		}
 
         /// <summary>
         /// Read a value from the pin
         /// </summary>
         /// <returns>The value read from the pin</returns>
-        public abstract bool Read();
+		public virtual bool Read()
+		{
+			if (IsDisposed)
+				throw new ObjectDisposedException(string.Empty);
+			if (_direction != GPIODirection.In)
+				PinDirection = GPIODirection.In;
+			return false;
+		}
 
         /// <summary>
         /// Dispose of the GPIO pin
         /// </summary>
-        public abstract void Dispose();
+		public virtual void Dispose()
+		{
+			if (_disposed)
+				throw new ObjectDisposedException(string.Empty);
+
+			_disposed = true;
+			lock (_exportedPins)
+			{
+				_exportedPins.Remove(_pin);
+			}
+		}
     }
 }
