@@ -4,20 +4,20 @@ using System.Collections.Generic;
 // Author: Aaron Anderson <aanderson@netopia.ca>
 namespace RaspberryPiDotNet
 {
-    /// <summary>
-    /// Abstract class for the GPIO connector on the Pi (P1) (as found next to the yellow RCA video socket on the Rpi circuit board)
-    /// </summary>
-    public abstract class GPIO : IDisposable
-    {
-        /// <summary>
-        /// Dictionary that stores created (exported) pins that where not disposed.
-        /// </summary>
-        private static Dictionary<GPIOPins, GPIO> _exportedPins = new Dictionary<GPIOPins, GPIO>();
+	/// <summary>
+	/// Abstract class for the GPIO connector on the Pi (P1) (as found next to the yellow RCA video socket on the Rpi circuit board)
+	/// </summary>
+	public abstract class GPIO : IDisposable
+	{
+		/// <summary>
+		/// Dictionary that stores created (exported) pins that where not disposed.
+		/// </summary>
+		private static Dictionary<GPIOPins, GPIO> _exportedPins = new Dictionary<GPIOPins, GPIO>();
 
-        /// <summary>
-        /// The currently assigned GPIO pin. Used for class methods.
-        /// </summary>
-        protected readonly GPIOPins _pin;
+		/// <summary>
+		/// The currently assigned GPIO pin. Used for class methods.
+		/// </summary>
+		protected readonly GPIOPins _pin;
 
 		/// <summary>
 		/// Variable to track the disposed state
@@ -28,29 +28,33 @@ namespace RaspberryPiDotNet
 		/// <summary>
 		/// Gets the pin that this GPIO instance represents
 		/// </summary>
-		public GPIOPins Pin
-		{
-			get
-			{
+		public GPIOPins Pin {
+			get {
 				if (_disposed)
 					throw new ObjectDisposedException(string.Empty);
 				return _pin;
 			}
 		}
-		
+
+		/// <summary>
+		/// Gets the bit mask of this pin.
+		/// </summary>
+		public GPIOPinMask Mask {
+			get {
+				return (GPIOPinMask)(1 << (ushort)Pin); //Pin-Value has a low range (0-~32), so even casting to byte would be ok.
+			}
+		}
+
 		/// <summary>
 		/// Gets or sets the communication direction for this pin
 		/// </summary>
-		public virtual GPIODirection PinDirection
-		{
-			get
-			{
+		public virtual GPIODirection PinDirection {
+			get {
 				if (_disposed)
 					throw new ObjectDisposedException(string.Empty);
 				return _direction;
 			}
-			set
-			{
+			set {
 				if (_disposed)
 					throw new ObjectDisposedException(string.Empty);
 				_direction = value;
@@ -60,50 +64,44 @@ namespace RaspberryPiDotNet
 		/// <summary>
 		/// Gets the disposal state of this GPIO instance
 		/// </summary>
-		public bool IsDisposed
-		{
-			get
-			{
+		public bool IsDisposed {
+			get {
 				return _disposed;
 			}
 		}
 
-        /// <summary>
-        /// Access to the specified GPIO setup with the specified direction with the specified initial value
-        /// </summary>
-        /// <param name="pin">The GPIO pin</param>
-        /// <param name="direction">Direction</param>
-        /// <param name="initialValue">Initial Value</param>
-        protected GPIO(GPIOPins pin, GPIODirection direction, bool initialValue)
-        {
-			lock (_exportedPins)
-			{
+		/// <summary>
+		/// Access to the specified GPIO setup with the specified direction with the specified initial value
+		/// </summary>
+		/// <param name="pin">The GPIO pin</param>
+		/// <param name="direction">Direction</param>
+		/// <param name="initialValue">Initial Value</param>
+		protected GPIO(GPIOPins pin, GPIODirection direction, bool initialValue) {
+			if (pin == GPIOPins.GPIO_NONE) throw new ArgumentException("Invalid pin");
+			lock (_exportedPins) {
 				if (_exportedPins.ContainsKey(pin))
 					throw new Exception("Cannot use pin with multiple instances. Unexport the previous instance with Dispose() first! (pin " + (uint)pin + ")");
 				_exportedPins[pin] = this;
 
 				_pin = pin;
-				try
-				{
+				try {
 					PinDirection = direction;
 					Write(initialValue);
 				}
-				catch
-				{
+				catch {
 					Dispose();
 					throw;
 				}
 			}
-        }
+		}
 
 		/// <summary>
 		/// Finalizer to make sure we cleanup after ourselves.
 		/// </summary>
-        ~GPIO()
-        {
+		~GPIO() {
 			if (!_disposed)
 				Dispose();
-        }
+		}
 
 		/// <summary>
 		/// Sets a pin to output the give value.
@@ -112,8 +110,7 @@ namespace RaspberryPiDotNet
 		/// </summary>
 		/// <param name="pin">The pin who's value to set</param>
 		/// <param name="value">The value to set</param>
-		public static void Write(GPIOPins pin, bool value)
-		{
+		public static void Write(GPIOPins pin, bool value) {
 			CreatePin(pin, GPIODirection.Out).Write(value);
 		}
 
@@ -124,8 +121,7 @@ namespace RaspberryPiDotNet
 		/// </summary>
 		/// <param name="pin">The pin who's value to get</param>
 		/// <returns>The value of the pin</returns>
-		public static bool Read(GPIOPins pin)
-		{
+		public static bool Read(GPIOPins pin) {
 			return CreatePin(pin, GPIODirection.In).Read();
 		}
 
@@ -135,23 +131,19 @@ namespace RaspberryPiDotNet
 		/// <param name="pin">The pin to create or export</param>
 		/// <param name="dir">The direction the pin is to have</param>
 		/// <returns>The GPIO instance representing the pin</returns>
-		public static GPIO CreatePin(GPIOPins pin, GPIODirection dir)
-		{
+		public static GPIO CreatePin(GPIOPins pin, GPIODirection dir) {
 			lock (_exportedPins)
-				if (_exportedPins.ContainsKey(pin))
-				{
+				if (_exportedPins.ContainsKey(pin)) {
 					if (_exportedPins[pin].PinDirection != dir)
 						_exportedPins[pin].PinDirection = dir;
 					return _exportedPins[pin];
 				}
 
-			try
-			{
+			try {
 				return new GPIOMem(pin, dir);
 			}
 #if DEBUG
-			catch (Exception e)
-			{
+			catch (Exception e) {
 				System.Diagnostics.Debug.WriteLine("Unable to create pin " + (uint)pin + " as GPIOMem because: " + e.ToString());
 			}
 #else
@@ -159,13 +151,11 @@ namespace RaspberryPiDotNet
 			{
 			}
 #endif
-			try
-			{
+			try {
 				return new GPIOFile(pin, dir);
 			}
 #if DEBUG
-			catch (Exception e)
-			{
+			catch (Exception e) {
 				System.Diagnostics.Debug.WriteLine("Unable to create pin " + (uint)pin + " as GPIOFile because: " + e.ToString());
 			}
 #else
@@ -182,24 +172,22 @@ namespace RaspberryPiDotNet
 #endif
 		}
 
-        /// <summary>
-        /// Write a value to the pin
-        /// </summary>
-        /// <param name="value">The value to write to the pin</param>
-		public virtual void Write(bool value)
-		{
+		/// <summary>
+		/// Write a value to the pin
+		/// </summary>
+		/// <param name="value">The value to write to the pin</param>
+		public virtual void Write(bool value) {
 			if (IsDisposed)
 				throw new ObjectDisposedException(string.Empty);
 			if (_direction != GPIODirection.Out)
 				PinDirection = GPIODirection.Out;
 		}
 
-        /// <summary>
-        /// Read a value from the pin
-        /// </summary>
-        /// <returns>The value read from the pin</returns>
-		public virtual bool Read()
-		{
+		/// <summary>
+		/// Read a value from the pin
+		/// </summary>
+		/// <returns>The value read from the pin</returns>
+		public virtual bool Read() {
 			if (IsDisposed)
 				throw new ObjectDisposedException(string.Empty);
 			if (_direction != GPIODirection.In)
@@ -207,19 +195,17 @@ namespace RaspberryPiDotNet
 			return false;
 		}
 
-        /// <summary>
-        /// Dispose of the GPIO pin
-        /// </summary>
-		public virtual void Dispose()
-		{
+		/// <summary>
+		/// Dispose of the GPIO pin
+		/// </summary>
+		public virtual void Dispose() {
 			if (_disposed)
 				throw new ObjectDisposedException(string.Empty);
 
 			_disposed = true;
-			lock (_exportedPins)
-			{
+			lock (_exportedPins) {
 				_exportedPins.Remove(_pin);
 			}
 		}
-    }
+	}
 }
