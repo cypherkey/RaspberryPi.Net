@@ -126,6 +126,28 @@ namespace RaspberryPiDotNet
         [DllImport("libbcm2835.so", EntryPoint = "bcm2835_gpio_set_pud")]
         static extern void bcm2835_gpio_set_pud(GPIOPins pin, uint pud);
 
+				[DllImport("libbcm2835.so", EntryPoint = "bcm2835_gpio_set_multi")]
+				static extern void bcm2835_gpio_set_multi(GPIOPins mask);
+
+				[DllImport("libbcm2835.so", EntryPoint = "bcm2835_gpio_clr_multi")]
+				static extern void bcm2835_gpio_clr_multi(GPIOPins mask);
+
+				[DllImport("libbcm2835.so", EntryPoint = "bcm2835_gpio_write_multi")]
+				static extern void bcm2835_gpio_write_multi(GPIOPins mask, bool on);
+
         #endregion
+
+				public static void SetMulti(GPIOPins mask) {
+					bcm2835_gpio_set_multi(mask);
+				}
+
+				public static void ClearMulti(GPIOPins mask) {
+					bcm2835_gpio_clr_multi(mask);
+				}
+
+				public static void WriteMulti(GPIOPins mask, bool value) {
+					bcm2835_gpio_write_multi(mask, value);
+				}
+
     }
 }
