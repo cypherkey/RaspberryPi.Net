@@ -29,7 +29,7 @@ namespace Test
     {
         static void Main(string[] args)
         {
-            GPIOMem led = new GPIOMem(GPIO.GPIOPins.Pin12);
+            GPIOMem led = new GPIOMem(GPIOPins.Pin_P1_12);
             while(true)
             {
                 led.Write(true);
@@ -77,12 +77,13 @@ address HD44780 compatible displays.
 Example code:
 ```C#
 RaspPiGPIOMemLcdTransferProvider lcdProvider = new RaspPiGPIOMemLcdTransferProvider(
-    GPIOFile.GPIOPins.Pin21,
-    GPIOFile.GPIOPins.Pin23,
-    GPIOFile.GPIOPins.Pin11,
-    GPIOFile.GPIOPins.Pin13,
-    GPIOFile.GPIOPins.Pin15,
-    GPIOFile.GPIOPins.Pin19);
+    GPIOPins.Pin_P1_21,
+    GPIOPins.Pin_P1_18,
+    GPIOPins.Pin_P1_11,
+    GPIOPins.Pin_P1_13,
+    GPIOPins.Pin_P1_15,
+    GPIOPins.Pin_P1_19);
+
 
 Lcd lcd = new Lcd(lcdProvider);
 lcd.Begin(16, 2);
@@ -104,8 +105,8 @@ Example code:
 using System;
 using System.Collections.Generic;
 using System.Text;
-using RaspberryPiDotNet;
 using System.Threading;
+using RaspberryPiDotNet;
 
 namespace RPi_Temperature
 {
@@ -115,10 +116,10 @@ namespace RPi_Temperature
         {
             //# set up the SPI interface pins
             //# SPI port on the ADC to the Cobbler
-            GPIOMem SPICLK = new GPIOMem(GPIO.GPIOPins.GPIO18, GPIO.DirectionEnum.OUT);
-            GPIOMem SPIMISO = new GPIOMem(GPIO.GPIOPins.GPIO23, GPIO.DirectionEnum.IN);
-            GPIOMem SPIMOSI = new GPIOMem(GPIO.GPIOPins.GPIO24, GPIO.DirectionEnum.OUT);
-            GPIOMem SPICS = new GPIOMem(GPIO.GPIOPins.GPIO25, GPIO.DirectionEnum.OUT);
+            GPIOMem SPICLK = new GPIOMem(GPIOPins.Pin_P1_18, GPIODirection.Out);
+            GPIOMem SPIMISO = new GPIOMem(GPIOPins.Pin_P1_23, GPIODirection.In);
+            GPIOMem SPIMOSI = new GPIOMem(GPIOPins.Pin_P1_24, GPIODirection.Out);
+            GPIOMem SPICS = new GPIOMem(GPIOPins.Pin_P1_22, GPIODirection.Out);
 
             // temperature sensor connected to channel 0 of mcp3008
             int adcnum = 0;
