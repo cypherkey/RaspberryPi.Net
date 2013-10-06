@@ -23,7 +23,19 @@ namespace RaspberryPiDotNet
 		/// Variable to track the disposed state
 		/// </summary>
 		private bool _disposed = false;
+
+        /// <summary>
+        /// Direction of the GPIO pin
+        /// </summary>
 		private GPIODirection _direction;
+
+        /// <summary>
+        /// GPIO pull up-down resistor
+        /// </summary>
+        // BCM2835_GPIO_PUD_OFF = 0b00 = 0
+        // BCM2835_GPIO_PUD_DOWN = 0b01 = 1
+        // BCM2835_GPIO_PUD_UP = 0b10 = 2
+        public GPIOResistor _resistor = GPIOResistor.OFF;
 
 		/// <summary>
 		/// Gets the pin that this GPIO instance represents
@@ -60,6 +72,25 @@ namespace RaspberryPiDotNet
 				_direction = value;
 			}
 		}
+
+        /// <summary>
+        /// Gets or sets the internal resistor value for the pin
+        /// </summary>
+        public virtual GPIOResistor Resistor
+        {
+            get
+            {
+                if (_disposed)
+                    throw new ObjectDisposedException(string.Empty);
+                return _resistor;
+            }
+            set
+            {
+                if (_disposed)
+                    throw new ObjectDisposedException(string.Empty);
+                _resistor = value;
+            }
+        }
 
 		/// <summary>
 		/// Gets the disposal state of this GPIO instance

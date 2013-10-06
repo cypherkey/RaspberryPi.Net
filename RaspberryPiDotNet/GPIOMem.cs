@@ -57,7 +57,6 @@ namespace RaspberryPiDotNet
 		#endregion
 
 		#region Properties
-
 		/// <summary>
 		/// Gets or sets the communication direction for this pin
 		/// </summary>
@@ -70,15 +69,27 @@ namespace RaspberryPiDotNet
 				{
 					// Set the direction on the pin
 					bcm2835_gpio_fsel(_pin, value == GPIODirection.Out);
-					if (value == GPIODirection.In)
-						// BCM2835_GPIO_PUD_OFF = 0b00 = 0
-						// BCM2835_GPIO_PUD_DOWN = 0b01 = 1
-						// BCM2835_GPIO_PUD_UP = 0b10 = 2
-						bcm2835_gpio_set_pud(_pin, 0);
+                    if (value == GPIODirection.In)
+                        Resistor = GPIOResistor.OFF;
 				}
 			}
 		}
 
+        /// <summary>
+        /// Gets or sets the internal resistor value for the pin
+        /// </summary>
+        public override GPIOResistor Resistor
+        {
+            get {
+                return base.Resistor;
+            }
+            set {
+                if (Resistor != (base.Resistor = value)) // Left to right eval ensures base class gets to check for disposed object access
+                {
+                    bcm2835_gpio_set_pud(_pin, (uint)value);
+                }
+            }
+        }
 		#endregion
 
 		#region Class Methods
