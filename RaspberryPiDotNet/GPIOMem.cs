@@ -54,9 +54,29 @@ namespace RaspberryPiDotNet
 		public GPIOMem(GPIOPins pin, GPIODirection direction, bool initialValue)
 			: base(pin, direction, initialValue) {
 		}
+
+        /// <summary>
+        /// Access to the specified GPIO PWM setup with the specified pin, divisor, channel, markspace, range and status of PWM (Enabled/disabled)
+        /// </summary>
+        /// <param name="pin">The GPIO pin</param>
+        /// <param name="PWM_Divisor">Clock Divider from 19.2MHz</param>
+        /// <param name="PWM_Channel">Selected Pwm Channel (use channel 0)</param>
+        /// <param name="PWM_Markspace">Selected Pwm method (balanced or markspace, use markspace default)</param>
+        /// <param name="PWM_Range">Selected range for Pwm steps (Output frequency is calculated from Pwm_Divisor/Pwm_range)</param>
+        /// <param name="PWM_Enabled">Selected intialised Pwm mode(Enabled or disabled)</param>
+        public GPIOMem(GPIOPins pin, GPIOPwmDivisor PWM_Divisor, GPIOPwmChannel PWM_Channel, GPIOPwmMarkspace PWM_Markspace, int PWM_Range, GPIOPwmEnabled PWM_Enabled)
+            : base(pin, PWM_Divisor, PWM_Channel, PWM_Markspace, PWM_Range, PWM_Enabled)
+        {
+            bcm2835_gpio_fsel(pin, (int)GPIODirection.Pwm);
+            bcm2835_pwm_set_clock((int)PWM_Divisor);
+            bcm2835_pwm_set_mode((int)PWM_Channel, (int)PWM_Markspace, (int)PWM_Enabled);
+            bcm2835_pwm_set_range((int)PWM_Channel, PWM_Range);
+        }
+
 		#endregion
 
 		#region Properties
+
 		/// <summary>
 		/// Gets or sets the communication direction for this pin
 		/// </summary>
@@ -110,6 +130,26 @@ namespace RaspberryPiDotNet
 			base.Read();
 			return bcm2835_gpio_lev(_pin);
 		}
+
+        public override void Set_PWM_Clock(int PWM_Divisor)
+        {
+            bcm2835_pwm_set_clock(PWM_Divisor);
+             
+        }
+        public override void Set_PWM_Mode(int markspace, int enabled)
+        {
+            bcm2835_pwm_set_mode((int)base.Channel, markspace, enabled);
+        }
+        public override void Set_PWM_Range(int range)
+        {
+            bcm2835_pwm_set_range((int)base.Channel, range);
+        }
+
+        public override void Set_PWM_Data(int range)
+        {
+            bcm2835_pwm_set_data((int)base.Channel, range);
+        }
+
 		#endregion
 
 		#region Imported functions
@@ -117,7 +157,7 @@ namespace RaspberryPiDotNet
 		static extern bool bcm2835_init();
 
 		[DllImport("libbcm2835.so", EntryPoint = "bcm2835_gpio_fsel")]
-		static extern void bcm2835_gpio_fsel(GPIOPins pin, bool mode_out);
+		static extern void bcm2835_gpio_fsel(GPIOPins pin, int mode_out);
 
 		[DllImport("libbcm2835.so", EntryPoint = "bcm2835_gpio_write")]
 		static extern void bcm2835_gpio_write(GPIOPins pin, bool value);
@@ -126,7 +166,7 @@ namespace RaspberryPiDotNet
 		static extern bool bcm2835_gpio_lev(GPIOPins pin);
 
 		[DllImport("libbcm2835.so", EntryPoint = "bcm2835_gpio_set_pud")]
-		static extern void bcm2835_gpio_set_pud(GPIOPins pin, uint pud);
+		static extern void bcm2835_gpio_set_pud(GPIOPins pin, int pud);
 
 		[DllImport("libbcm2835.so", EntryPoint = "bcm2835_gpio_set_multi")]
 		static extern void bcm2835_gpio_set_multi(GPIOPinMask mask);
@@ -136,6 +176,18 @@ namespace RaspberryPiDotNet
 
 		[DllImport("libbcm2835.so", EntryPoint = "bcm2835_gpio_write_multi")]
 		static extern void bcm2835_gpio_write_multi(GPIOPinMask mask, bool on);
+
+		[DllImport("libbcm2835.so", EntryPoint = "bcm2835_pwm_set_clock")]
+		static extern void bcm2835_pwm_set_clock(int divisor);
+
+		[DllImport("libbcm2835.so", EntryPoint = "bcm2835_pwm_set_mode")]
+		static extern void bcm2835_pwm_set_mode(int channel, int markspace, int enabled);
+
+		[DllImport("libbcm2835.so", EntryPoint = "bcm2835_pwm_set_range")]
+		static extern void bcm2835_pwm_set_range(int channel, int range);
+
+		[DllImport("libbcm2835.so", EntryPoint = "bcm2835_pwm_set_data")]
+		static extern void bcm2835_pwm_set_data(int channel, int data);
 
 		#endregion
 

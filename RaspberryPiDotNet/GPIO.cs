@@ -57,6 +57,10 @@ namespace RaspberryPiDotNet
 			}
 		}
 
+        public GPIOPwmChannel Channel {
+            get { return PWM_Channel; }
+        }
+
 		/// <summary>
 		/// Gets or sets the communication direction for this pin
 		/// </summary>
@@ -126,6 +130,39 @@ namespace RaspberryPiDotNet
 			}
 		}
 
+        protected GPIO(GPIOPins pin, GPIOPwmDivisor PWM_Divisor, GPIOPwmChannel PWM_Channel, GPIOPwmMarkspace PWM_Markspace, int PWM_Range, GPIOPwmEnabled PWM_Enabled)
+        {
+            if (pin == GPIOPins.GPIO_NONE) throw new ArgumentException("Invalid pin");
+            lock (_exportedPins)
+            {
+                if (_exportedPins.ContainsKey(pin))
+                    throw new Exception("Cannot use pin with multiple instances. Unexport the previous instance with Dispose() first! (pin " + (uint)pin + ")");
+                _exportedPins[pin] = this;
+
+                _pin = pin;
+                try
+                {
+                    this._pin = pin;
+                    PinDirection = GPIODirection.Pwm;
+                    this.PWM_Divisor = PWM_Divisor;
+                    this.PWM_Channel = PWM_Channel;
+                    this.PWM_Markspace = PWM_Markspace;
+                    this.PWM_Range = PWM_Range;
+                    this.PWM_Enabled = PWM_Enabled;
+                }
+                catch
+                {
+                    Dispose();
+                    throw;
+                }
+            }
+        }
+        GPIOPwmDivisor PWM_Divisor;
+        GPIOPwmChannel PWM_Channel;
+        GPIOPwmMarkspace PWM_Markspace;
+        GPIOPwmEnabled PWM_Enabled;
+        int PWM_Range;
+
 		/// <summary>
 		/// Finalizer to make sure we cleanup after ourselves.
 		/// </summary>
@@ -133,6 +170,11 @@ namespace RaspberryPiDotNet
 			if (!_disposed)
 				Dispose();
 		}
+
+        virtual public void Set_PWM_Clock(int PWM_Divisor) { }
+        virtual public void Set_PWM_Mode(int markspace, int enabled) { }
+        virtual public void Set_PWM_Range(int range) { }
+        virtual public void Set_PWM_Data(int PWM_Data) { }
 
 		/// <summary>
 		/// Sets a pin to output the give value.

@@ -95,6 +95,7 @@
 		V2_GPIO_24 = 24,
 		V2_GPIO_25 = 25,
 		V2_GPIO_27 = 27,
+        V2_GPIO_PWM = 18,
 
 		//Revision 2, new plug P5
 		V2_GPIO_28 = 28,
