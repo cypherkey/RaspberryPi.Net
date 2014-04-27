@@ -50,6 +50,7 @@
     <Compile Include="MicroLiquidCrystal\RaspPiGPIOMemLcdTransferProvider.cs" />
     <Compile Include="MicroLiquidCrystal\ILcdTransferProvider.cs" />
     <Compile Include="MicroLiquidCrystal\Lcd.cs" />
+    <Compile Include="PinState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TM16XX\TM1638.cs" />
     <Compile Include="TM16XX\TM16XX.cs" />

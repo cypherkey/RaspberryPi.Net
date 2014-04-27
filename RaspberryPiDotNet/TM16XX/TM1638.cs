@@ -3,7 +3,7 @@
 // This class is the base class for the TM1638/TM1640 board.
 // It is a port of the TM1638 library by Ricardo Batista
 // URL: http://code.google.com/p/tm1638-library/
-namespace RaspberryPiDotNet
+namespace RaspberryPiDotNet.TM16XX
 {
     public class TM1638 : TM16XX
     {

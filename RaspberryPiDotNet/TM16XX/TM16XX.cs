@@ -4,15 +4,18 @@ using System.Collections.Generic;
 // This class is the base class for the TM1638/TM1640 board.
 // It is a port of the TM1638 library by Ricardo Batista
 // URL: http://code.google.com/p/tm1638-library/
-namespace RaspberryPiDotNet
+
+namespace RaspberryPiDotNet.TM16XX
 {
     public abstract class TM16XX
     {
+
+        // ReSharper disable InconsistentNaming
         protected GPIO _data;
         protected GPIO _clock;
         protected GPIO _strobe;
         protected int _displays;
-
+        // ReSharper restore InconsistentNaming
         /// <summary>
         /// The character map for the seven segment displays.
         /// The bits are displayed by mapping bellow
@@ -268,7 +271,7 @@ namespace RaspberryPiDotNet
                 temp >>= 1;
                 _clock.Write(false);
 
-                if (_data.Read())
+                if (_data.Read() == PinState.High)
                     temp |= 0x80;
 
                 _clock.Write(true);
