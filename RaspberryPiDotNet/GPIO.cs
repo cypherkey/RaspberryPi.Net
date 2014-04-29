@@ -222,8 +222,6 @@ namespace RaspberryPiDotNet
 		public virtual PinState Read() {
 			if (IsDisposed)
 				throw new ObjectDisposedException(string.Empty);
-			if (_direction != GPIODirection.In)
-				PinDirection = GPIODirection.In;
 			return PinState.Low;
 		}
 
