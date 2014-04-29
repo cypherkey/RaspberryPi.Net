@@ -29,12 +29,12 @@ namespace Test
     {
         static void Main(string[] args)
         {
-            GPIOMem led = new GPIOMem(GPIOPins.Pin_P1_12);
+            GPIOMem led = new GPIOMem(GPIOPins.V2_GPIO_12)
             while(true)
             {
-                led.Write(true);
+                led.Write(PinState.High);
                 System.Threading.Thread.Sleep(500);
-                led.Write(false);
+                led.Write(PinState.Low);
                 System.Threading.Thread.Sleep(500);
             }
         }
@@ -67,6 +67,8 @@ library is required. To compile a statically linked binary, do the following:
 # make libbcm2835.a
 # cc -shared bcm2835.o -o libbcm2835.so
 ```
+
+You can also try using our own compiled file [here](https://www.dropbox.com/s/716brdf0owbx4tf/libbcm2835.so). If it doesn't work, you must compile yourself. It must be in the same folder as the application.
 
 Liquid Crystal Display
 ----------------------
