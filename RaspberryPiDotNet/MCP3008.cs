@@ -3,6 +3,7 @@ using System;
 // Original author: Mikey Sklar - git://gist.github.com/3249416.git
 // Adafruit article: http://learn.adafruit.com/reading-a-analog-in-and-controlling-audio-volume-with-the-raspberry-pi
 // Ported from python and modified by: Gilberto Garcia <ferraripr@gmail.com>; twitter: @ferraripr
+
 namespace RaspberryPiDotNet
 {
     /// <summary>
@@ -86,15 +87,13 @@ namespace RaspberryPiDotNet
 
             int adcout = 0;
             //# read in one empty bit, one null bit and 10 ADC bits
-            for (int i = 0; i < 12; i++)
+            for (var i = 0; i < 12; i++)
             {
                 clockpin.Write(true);
                 clockpin.Write(false);
                 adcout <<= 1;
-                if (misopin.Read())
-                {
+                if (misopin.Read() == PinState.High)
                     adcout |= 0x1;
-                }
             }
 
             cspin.Write(true);

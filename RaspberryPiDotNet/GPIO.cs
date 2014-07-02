@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 // Author: Aaron Anderson <aanderson@netopia.ca>
+
 namespace RaspberryPiDotNet
 {
 	/// <summary>
@@ -152,7 +153,7 @@ namespace RaspberryPiDotNet
 		/// </summary>
 		/// <param name="pin">The pin who's value to get</param>
 		/// <returns>The value of the pin</returns>
-		public static bool Read(GPIOPins pin) {
+		public static PinState Read(GPIOPins pin) {
 			return CreatePin(pin, GPIODirection.In).Read();
 		}
 
@@ -218,12 +219,10 @@ namespace RaspberryPiDotNet
 		/// Read a value from the pin
 		/// </summary>
 		/// <returns>The value read from the pin</returns>
-		public virtual bool Read() {
+		public virtual PinState Read() {
 			if (IsDisposed)
 				throw new ObjectDisposedException(string.Empty);
-			if (_direction != GPIODirection.In)
-				PinDirection = GPIODirection.In;
-			return false;
+			return PinState.Low;
 		}
 
 		/// <summary>

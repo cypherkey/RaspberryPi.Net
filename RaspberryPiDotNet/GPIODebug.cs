@@ -1,13 +1,12 @@
-﻿using System;
-
-namespace RaspberryPiDotNet
+﻿namespace RaspberryPiDotNet
 {
     /// <summary>
     /// Raspberry Pi GPIO debug class.
     /// </summary>
+// ReSharper disable once InconsistentNaming
     public class GPIODebug : GPIO
     {
-        private bool _currentValue = false;
+        private bool _currentValue;
 
         #region Constructor
         /// <summary>
@@ -52,24 +51,16 @@ namespace RaspberryPiDotNet
 			base.Write(value);
 			_currentValue = value;
         }
-
+        
         /// <summary>
         /// Read a value from the pin
         /// </summary>
         /// <returns>The value read from the pin</returns>
-        public override bool Read()
+        public override PinState Read()
         {
 			System.Diagnostics.Debug.WriteLine("GPIO pin " + _pin + " reads as " + _currentValue);
 			base.Read();
-            return _currentValue;
-        }
-
-        /// <summary>
-        /// Dispose of the GPIO pin
-        /// </summary>
-        public override void Dispose()
-        {
-			base.Dispose();
+            return _currentValue ? PinState.High : PinState.Low;
         }
         #endregion
     }

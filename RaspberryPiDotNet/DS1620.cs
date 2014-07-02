@@ -2,6 +2,7 @@
 using System.Threading;
 
 // Derived based on work done by AdamS at http://forums.netduino.com/index.php?/topic/3335-netduino-plus-and-ds1620-anyone/page__view__findpost__p__22972
+
 namespace RaspberryPiDotNet
 {
     public class DS1620
@@ -35,10 +36,10 @@ namespace RaspberryPiDotNet
         private void SendCommand(int command)
         {
             // Sends 8 bit command on DQ output, least sig bit first
-            int n, bit;          
+            int n;
             for (n = 0; n < 8; n++) 
             {            
-                bit = ((command >> n) & (0x01));
+                var bit = ((command >> n) & (0x01));
                 _dq.Write((bit == 1));
                 _clk.Write(false);
                 _clk.Write(true);      
@@ -51,16 +52,13 @@ namespace RaspberryPiDotNet
         /// <returns>The temperature in half degree increments</returns>
         private int ReadData()
         {
-            int bit, n;
-            int raw_data = 0;            // go into input mode         
+            int n;
+            var raw_data = 0;            // go into input mode         
 
             for (n = 0; n < 9; n++)
             {
                 _clk.Write(false);
-                if (_dq.Read() == true)
-                    bit = 1;
-                else
-                    bit = 0;
+                var bit = _dq.Read() == PinState.High ? 1 : 0;
                 _clk.Write(true);
                 raw_data = raw_data | (bit << n);
             }

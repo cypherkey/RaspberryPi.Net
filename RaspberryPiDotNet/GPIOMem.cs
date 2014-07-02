@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace RaspberryPiDotNet
@@ -102,13 +101,23 @@ namespace RaspberryPiDotNet
 			bcm2835_gpio_write(_pin, value);
 		}
 
+        /// <summary>
+        /// Write a value to the pin
+        /// </summary>
+        /// <param name="pinState"></param>
+        public void Write(PinState pinState)
+        {
+            Write(pinState == PinState.High);
+        }
+
 		/// <summary>
 		/// Read a value from the pin
 		/// </summary>
 		/// <returns>The value read from the pin</returns>
-		public override bool Read() {
+        public override PinState Read()
+        {
 			base.Read();
-			return bcm2835_gpio_lev(_pin);
+			return bcm2835_gpio_lev(_pin) ? PinState.High : PinState.Low;
 		}
 		#endregion
 

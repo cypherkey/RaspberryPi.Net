@@ -1,19 +1,20 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
+﻿using System.IO;
 
 // Author: Aaron Anderson <aanderson@netopia.ca>
 // Based on work done by x4m and britguy (http://www.raspberrypi.org/phpBB3/viewtopic.php?f=34&t=6720)
+
 namespace RaspberryPiDotNet
 {
     /// <summary>
     /// Raspberry Pi GPIO using the file-based access method.
     /// </summary>
+    // ReSharper disable once InconsistentNaming
     public class GPIOFile : GPIO
     {
         /// <summary>
         /// The path on the Raspberry Pi for the GPIO interface
         /// </summary>
+        // ReSharper disable once InconsistentNaming
         private const string GPIO_PATH = "/sys/class/gpio/";
 
         #region Constructor
@@ -87,14 +88,23 @@ namespace RaspberryPiDotNet
         }
 
         /// <summary>
+        /// Write a value to the pin
+        /// </summary>
+        /// <param name="value">The value to write to the pin</param>
+        public void Write(PinState value)
+        {
+            Write(value == PinState.High);
+        }
+
+        /// <summary>
         /// Read a value from the pin
         /// </summary>
         /// <returns>The value read from the pin</returns>
-        public override bool Read()
+        public override PinState Read()
         {
 			base.Read();
-			string readValue = File.ReadAllText(GPIO_PATH + "gpio" + (uint)_pin + "/value");
-			return (readValue.Length > 0 && readValue[0] == '1');
+			var readValue = File.ReadAllText(GPIO_PATH + "gpio" + (uint)_pin + "/value");
+			return (readValue.Length > 0 && readValue[0] == '1') ? PinState.High : PinState.Low;
         }
 
         /// <summary>
