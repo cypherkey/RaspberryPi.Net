@@ -1,0 +1,584 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>RaspberryPiDotNet</name>
+    </assembly>
+    <members>
+        <member name="M:RaspberryPiDotNet.DS1620.SendCommand(System.Int32)">
+            <summary>
+            Sends 8 bit command to the DS1620
+            </summary>
+            <param name="command">The command</param>
+        </member>
+        <member name="M:RaspberryPiDotNet.DS1620.ReadData">
+            <summary>
+            Read 8 bit data from the DS1620
+            </summary>
+            <returns>The temperature in half degree increments</returns>
+        </member>
+        <member name="M:RaspberryPiDotNet.DS1620.GetTemperature">
+            <summary>
+            Send the commands to retrieve the temperature
+            </summary>
+            <returns>The temperature with a half degree granularity</returns>
+        </member>
+        <member name="P:RaspberryPiDotNet.DS1620.Temperature">
+            <summary>
+            The current temperature
+            </summary>
+        </member>
+        <member name="T:RaspberryPiDotNet.GPIO">
+            <summary>
+            Abstract class for the GPIO connector on the Pi (P1) (as found next to the yellow RCA video socket on the Rpi circuit board)
+            </summary>
+        </member>
+        <member name="F:RaspberryPiDotNet.GPIO._exportedPins">
+            <summary>
+            Dictionary that stores created (exported) pins that where not disposed.
+            </summary>
+        </member>
+        <member name="F:RaspberryPiDotNet.GPIO._pin">
+            <summary>
+            The currently assigned GPIO pin. Used for class methods.
+            </summary>
+        </member>
+        <member name="F:RaspberryPiDotNet.GPIO._disposed">
+            <summary>
+            Variable to track the disposed state
+            </summary>
+        </member>
+        <member name="F:RaspberryPiDotNet.GPIO._direction">
+            <summary>
+            Direction of the GPIO pin
+            </summary>
+        </member>
+        <member name="F:RaspberryPiDotNet.GPIO._resistor">
+            <summary>
+            GPIO pull up-down resistor
+            </summary>
+        </member>
+        <member name="M:RaspberryPiDotNet.GPIO.#ctor(RaspberryPiDotNet.GPIOPins,RaspberryPiDotNet.GPIODirection,System.Boolean)">
+            <summary>
+            Access to the specified GPIO setup with the specified direction with the specified initial value
+            </summary>
+            <param name="pin">The GPIO pin</param>
+            <param name="direction">Direction</param>
+            <param name="initialValue">Initial Value</param>
+        </member>
+        <member name="M:RaspberryPiDotNet.GPIO.Finalize">
+            <summary>
+            Finalizer to make sure we cleanup after ourselves.
+            </summary>
+        </member>
+        <member name="M:RaspberryPiDotNet.GPIO.Write(RaspberryPiDotNet.GPIOPins,System.Boolean)">
+            <summary>
+            Sets a pin to output the give value.
+            
+            Creates (exports) the pin if needed, and sets it to Out direction.
+            </summary>
+            <param name="pin">The pin who's value to set</param>
+            <param name="value">The value to set</param>
+        </member>
+        <member name="M:RaspberryPiDotNet.GPIO.Read(RaspberryPiDotNet.GPIOPins)">
+            <summary>
+            Gets the value of a given pin.
+            
+            Creates (exports) the pin if needed, and sets it to In direction.
+            </summary>
+            <param name="pin">The pin who's value to get</param>
+            <returns>The value of the pin</returns>
+        </member>
+        <member name="M:RaspberryPiDotNet.GPIO.CreatePin(RaspberryPiDotNet.GPIOPins,RaspberryPiDotNet.GPIODirection)">
+            <summary>
+            Creates a pin if it has not already been created (exported), creates a GPIOMem if possible, otherwise falls back to GPIOFile.
+            </summary>
+            <param name="pin">The pin to create or export</param>
+            <param name="dir">The direction the pin is to have</param>
+            <returns>The GPIO instance representing the pin</returns>
+        </member>
+        <member name="M:RaspberryPiDotNet.GPIO.Write(System.Boolean)">
+            <summary>
+            Write a value to the pin
+            </summary>
+            <param name="value">The value to write to the pin</param>
+        </member>
+        <member name="M:RaspberryPiDotNet.GPIO.Read">
+            <summary>
+            Read a value from the pin
+            </summary>
+            <returns>The value read from the pin</returns>
+        </member>
+        <member name="M:RaspberryPiDotNet.GPIO.Dispose">
+            <summary>
+            Dispose of the GPIO pin
+            </summary>
+        </member>
+        <member name="P:RaspberryPiDotNet.GPIO.Pin">
+            <summary>
+            Gets the pin that this GPIO instance represents
+            </summary>
+        </member>
+        <member name="P:RaspberryPiDotNet.GPIO.Mask">
+            <summary>
+            Gets the bit mask of this pin.
+            </summary>
+        </member>
+        <member name="P:RaspberryPiDotNet.GPIO.PinDirection">
+            <summary>
+            Gets or sets the communication direction for this pin
+            </summary>
+        </member>
+        <member name="P:RaspberryPiDotNet.GPIO.Resistor">
+            <summary>
+            Gets or sets the internal resistor value for the pin
+            </summary>
+        </member>
+        <member name="P:RaspberryPiDotNet.GPIO.IsDisposed">
+            <summary>
+            Gets the disposal state of this GPIO instance
+            </summary>
+        </member>
+        <member name="T:RaspberryPiDotNet.GPIODebug">
+            <summary>
+            Raspberry Pi GPIO debug class.
+            </summary>
+        </member>
+        <member name="M:RaspberryPiDotNet.GPIODebug.#ctor(RaspberryPiDotNet.GPIOPins)">
+            <summary>
+            Access to the specified GPIO setup as an output port with an initial value of false (0)
+            </summary>
+            <param name="pin">The GPIO pin</param>
+        </member>
+        <member name="M:RaspberryPiDotNet.GPIODebug.#ctor(RaspberryPiDotNet.GPIOPins,RaspberryPiDotNet.GPIODirection)">
+            <summary>
+            Access to the specified GPIO setup with the specified direction with an initial value of false (0)
+            </summary>
+            <param name="pin">The GPIO pin</param>
+            <param name="direction">Direction</param>
+        </member>
+        <member name="M:RaspberryPiDotNet.GPIODebug.#ctor(RaspberryPiDotNet.GPIOPins,RaspberryPiDotNet.GPIODirection,System.Boolean)">
+            <summary>
+            Access to the specified GPIO setup with the specified direction with the specified initial value
+            </summary>
+            <param name="pin">The GPIO pin</param>
+            <param name="direction">Direction</param>
+            <param name="initialValue">Initial Value</param>
+        </member>
+        <member name="M:RaspberryPiDotNet.GPIODebug.Write(System.Boolean)">
+            <summary>
+            Write a value to the pin
+            </summary>
+            <param name="value">The value to write to the pin</param>
+        </member>
+        <member name="M:RaspberryPiDotNet.GPIODebug.Read">
+            <summary>
+            Read a value from the pin
+            </summary>
+            <returns>The value read from the pin</returns>
+        </member>
+        <member name="T:RaspberryPiDotNet.GPIODirection">
+            <summary>
+            Specifies the direction of the GPIO port
+            </summary>
+        </member>
+        <member name="T:RaspberryPiDotNet.GPIOFile">
+            <summary>
+            Raspberry Pi GPIO using the file-based access method.
+            </summary>
+        </member>
+        <member name="F:RaspberryPiDotNet.GPIOFile.GPIO_PATH">
+            <summary>
+            The path on the Raspberry Pi for the GPIO interface
+            </summary>
+        </member>
+        <member name="M:RaspberryPiDotNet.GPIOFile.#ctor(RaspberryPiDotNet.GPIOPins)">
+            <summary>
+            Access to the specified GPIO setup as an output port with an initial value of false (0)
+            </summary>
+            <param name="pin">The GPIO pin</param>
+        </member>
+        <member name="M:RaspberryPiDotNet.GPIOFile.#ctor(RaspberryPiDotNet.GPIOPins,RaspberryPiDotNet.GPIODirection)">
+            <summary>
+            Access to the specified GPIO setup with the specified direction with an initial value of false (0)
+            </summary>
+            <param name="pin">The GPIO pin</param>
+            <param name="direction">Direction</param>
+        </member>
+        <member name="M:RaspberryPiDotNet.GPIOFile.#ctor(RaspberryPiDotNet.GPIOPins,RaspberryPiDotNet.GPIODirection,System.Boolean)">
+            <summary>
+            Access to the specified GPIO setup with the specified direction with the specified initial value
+            </summary>
+            <param name="pin">The GPIO pin</param>
+            <param name="direction">Direction</param>
+            <param name="initialValue">Initial Value</param>
+        </member>
+        <member name="M:RaspberryPiDotNet.GPIOFile.Write(System.Boolean)">
+            <summary>
+            Write a value to the pin
+            </summary>
+            <param name="value">The value to write to the pin</param>
+        </member>
+        <member name="M:RaspberryPiDotNet.GPIOFile.Write(RaspberryPiDotNet.PinState)">
+            <summary>
+            Write a value to the pin
+            </summary>
+            <param name="value">The value to write to the pin</param>
+        </member>
+        <member name="M:RaspberryPiDotNet.GPIOFile.Read">
+            <summary>
+            Read a value from the pin
+            </summary>
+            <returns>The value read from the pin</returns>
+        </member>
+        <member name="M:RaspberryPiDotNet.GPIOFile.Dispose">
+            <summary>
+            Dispose of the GPIO pin
+            </summary>
+        </member>
+        <member name="P:RaspberryPiDotNet.GPIOFile.PinDirection">
+            <summary>
+            Gets or sets the communication direction for this pin
+            </summary>
+        </member>
+        <member name="T:RaspberryPiDotNet.GPIOMem">
+            <summary>
+            Raspberry Pi GPIO using the direct memory access method.
+            This requires the bcm2835 GPIO library provided by 
+            Mike McCauley (mikem@open.com.au) at http://www.open.com.au/mikem/bcm2835/index.html.
+            
+            To create the shared object, download the source code from the link above. The standard Makefile compiles a
+            statically linked library. To build a shared object, do:
+               tar -zxf bcm2835-1.3.tar.gz
+               cd bcm2835-1.3/src
+               make libbcm2835.a
+               cc -shared bcm2835.o -o libbcm2835.so
+            Place the shared object in the same directory as the executable and other assemblies.
+            </summary>
+        </member>
+        <member name="M:RaspberryPiDotNet.GPIOMem.#ctor(RaspberryPiDotNet.GPIOPins)">
+            <summary>
+            Access to the specified GPIO setup as an output port with an initial value of false (0)
+            </summary>
+            <param name="pin">The GPIO pin</param>
+        </member>
+        <member name="M:RaspberryPiDotNet.GPIOMem.#ctor(RaspberryPiDotNet.GPIOPins,RaspberryPiDotNet.GPIODirection)">
+            <summary>
+            Access to the specified GPIO setup with the specified direction with an initial value of false (0)
+            </summary>
+            <param name="pin">The GPIO pin</param>
+            <param name="direction">Direction</param>
+        </member>
+        <member name="M:RaspberryPiDotNet.GPIOMem.#ctor(RaspberryPiDotNet.GPIOPins,RaspberryPiDotNet.GPIODirection,System.Boolean)">
+            <summary>
+            Access to the specified GPIO setup with the specified direction with the specified initial value
+            </summary>
+            <param name="pin">The GPIO pin</param>
+            <param name="direction">Direction</param>
+            <param name="initialValue">Initial Value</param>
+        </member>
+        <member name="M:RaspberryPiDotNet.GPIOMem.Write(System.Boolean)">
+            <summary>
+            Write a value to the pin
+            </summary>
+            <param name="value">The value to write to the pin</param>
+        </member>
+        <member name="M:RaspberryPiDotNet.GPIOMem.Write(RaspberryPiDotNet.PinState)">
+            <summary>
+            Write a value to the pin
+            </summary>
+            <param name="pinState"></param>
+        </member>
+        <member name="M:RaspberryPiDotNet.GPIOMem.Read">
+            <summary>
+            Read a value from the pin
+            </summary>
+            <returns>The value read from the pin</returns>
+        </member>
+        <member name="M:RaspberryPiDotNet.GPIOMem.SetMulti(RaspberryPiDotNet.GPIOPinMask)">
+            <summary>
+            Sets any of the first 32 GPIO output pins specified in the mask to HIGH.
+            </summary>
+            <param name="mask">Mask of pins to affect. Use eg: (GPIOPinMask.GPIO_00) | GPIOPinMask.GPIO_01)</param>
+        </member>
+        <member name="M:RaspberryPiDotNet.GPIOMem.ClearMulti(RaspberryPiDotNet.GPIOPinMask)">
+            <summary>
+            Sets any of the first 32 GPIO output pins specified in the mask to LOW.
+            </summary>
+            <param name="mask">Mask of pins to affect. Use eg: (GPIOPinMask.GPIO_00) | GPIOPinMask.GPIO_01)</param>
+        </member>
+        <member name="M:RaspberryPiDotNet.GPIOMem.WriteMulti(RaspberryPiDotNet.GPIOPinMask,System.Boolean)">
+            <summary>
+            Sets any of the first 32 GPIO output pins specified in the mask to value.
+            </summary>
+            <param name="mask">Mask of pins to affect. Use eg: (GPIOPinMask.GPIO_00) | GPIOPinMask.GPIO_01)</param>
+        </member>
+        <member name="P:RaspberryPiDotNet.GPIOMem.PinDirection">
+            <summary>
+            Gets or sets the communication direction for this pin
+            </summary>
+        </member>
+        <member name="P:RaspberryPiDotNet.GPIOMem.Resistor">
+            <summary>
+            Gets or sets the internal resistor value for the pin
+            </summary>
+        </member>
+        <member name="T:RaspberryPiDotNet.GPIOPins">
+            <remarks>
+            Refer to http://elinux.org/Rpi_Low-level_peripherals for diagram.
+            P1-01 = bottom left, P1-02 = top left
+            pi connector P1 pin    = GPIOnum
+                             P1-03 = GPIO0
+                             P1-05 = GPIO1
+                             P1-07 = GPIO4
+                             P1-08 = GPIO14 - alt function (UART0_TXD) on boot-up
+                             P1-10 = GPIO15 - alt function (UART0_TXD) on boot-up
+                             P1-11 = GPIO17
+                             P1-12 = GPIO18
+                             P1-13 = GPIO21
+                             P1-15 = GPIO22
+                             P1-16 = GPIO23
+                             P1-18 = GPIO24
+                             P1-19 = GPIO10
+                             P1-21 = GPIO9
+                             P1-22 = GPIO25
+                             P1-23 = GPIO11
+                             P1-24 = GPIO8
+                             P1-26 = GPIO7
+                             
+                             P5-03 = GPI28
+                             P5-04 = GPI29
+                             P5-05 = GPI30
+                             P5-06 = GPI31
+            
+            So to turn on Pin7 on the GPIO connector, pass in enumGPIOPIN.gpio4 as the pin parameter
+            </remarks>
+        </member>
+        <member name="T:RaspberryPiDotNet.MCP3008">
+            <summary>
+            Raspberry Pi using MCP3008 A/D Converters with SPI Serial Interface
+            <seealso cref="!:http://ww1.microchip.com/downloads/en/DeviceDoc/21295d.pdf"/>
+            </summary>
+        </member>
+        <member name="M:RaspberryPiDotNet.MCP3008.#ctor(System.Int32,RaspberryPiDotNet.GPIO,RaspberryPiDotNet.GPIO,RaspberryPiDotNet.GPIO,RaspberryPiDotNet.GPIO)">
+            <summary>
+            Connect MCP3008 with clock, Serial Peripheral Interface(SPI) and channel
+            </summary>
+            <param name="adc_channel">MCP3008 channel number 0-7 (pin 1-8 on chip).</param>
+            <param name="SPICLK">Clock pin</param>
+            <param name="SPIMOSI">SPI Master Output, Slave Input (MOSI)</param>
+            <param name="SPIMISO">SPI Master Input, Slave Output (MISO)</param>
+            <param name="SPICS">SPI Chip Select</param>
+        </member>
+        <member name="P:RaspberryPiDotNet.MCP3008.AnalogToDigital">
+            <summary>
+            Analog to digital conversion
+            </summary>
+        </member>
+        <member name="T:RaspberryPiDotNet.MicroLiquidCrystal.RaspPiGPIOFileLcdTransferProvider">
+            <summary>
+            Raspberry Pi GPIO provider for the Micro Liquid Crystal Library.
+            </summary>
+        </member>
+        <member name="P:RaspberryPiDotNet.MicroLiquidCrystal.ILcdTransferProvider.FourBitMode">
+            <summary>
+            Specify if the provider works in 4-bit mode; 8-bit mode is used otherwise.
+            </summary>
+        </member>
+        <member name="M:RaspberryPiDotNet.MicroLiquidCrystal.RaspPiGPIOFileLcdTransferProvider.#ctor(System.Boolean,RaspberryPiDotNet.GPIOPins,RaspberryPiDotNet.GPIOPins,RaspberryPiDotNet.GPIOPins,RaspberryPiDotNet.GPIOPins,RaspberryPiDotNet.GPIOPins,RaspberryPiDotNet.GPIOPins,RaspberryPiDotNet.GPIOPins,RaspberryPiDotNet.GPIOPins,RaspberryPiDotNet.GPIOPins,RaspberryPiDotNet.GPIOPins,RaspberryPiDotNet.GPIOPins)">
+            <summary>
+            Creates a variable of type LiquidCrystal. The display can be controlled using 4 or 8 data lines. If the former, omit the pin numbers for d0 to d3 and leave those lines unconnected. The RW pin can be tied to ground instead of connected to a pin on the Arduino; if so, omit it from this function's parameters. 
+            </summary>
+            <param name="fourBitMode"></param>
+            <param name="rs">The number of the CPU pin that is connected to the RS (register select) pin on the LCD.</param>
+            <param name="rw">The number of the CPU pin that is connected to the RW (Read/Write) pin on the LCD (optional).</param>
+            <param name="enable">the number of the CPU pin that is connected to the enable pin on the LCD.</param>
+            <param name="d0"></param>
+            <param name="d1"></param>
+            <param name="d2"></param>
+            <param name="d3"></param>
+            <param name="d4"></param>
+            <param name="d5"></param>
+            <param name="d6"></param>
+            <param name="d7"></param>
+        </member>
+        <member name="M:RaspberryPiDotNet.MicroLiquidCrystal.RaspPiGPIOFileLcdTransferProvider.Send(System.Byte,System.Boolean,System.Boolean)">
+            <summary>
+            Write either command or data, with automatic 4/8-bit selection
+            </summary>
+            <param name="value">value to write</param>
+            <param name="mode">Mode for RS (register select) pin.</param>
+            <param name="backlight">Backlight state.</param>
+        </member>
+        <member name="T:RaspberryPiDotNet.MicroLiquidCrystal.RaspPiGPIOMemLcdTransferProvider">
+            <summary>
+            Raspberry Pi GPIO provider for the Micro Liquid Crystal Library.
+            </summary>
+        </member>
+        <member name="M:RaspberryPiDotNet.MicroLiquidCrystal.RaspPiGPIOMemLcdTransferProvider.#ctor(System.Boolean,RaspberryPiDotNet.GPIOPins,RaspberryPiDotNet.GPIOPins,RaspberryPiDotNet.GPIOPins,RaspberryPiDotNet.GPIOPins,RaspberryPiDotNet.GPIOPins,RaspberryPiDotNet.GPIOPins,RaspberryPiDotNet.GPIOPins,RaspberryPiDotNet.GPIOPins,RaspberryPiDotNet.GPIOPins,RaspberryPiDotNet.GPIOPins,RaspberryPiDotNet.GPIOPins)">
+            <summary>
+            Creates a variable of type LiquidCrystal. The display can be controlled using 4 or 8 data lines. If the former, omit the pin numbers for d0 to d3 and leave those lines unconnected. The RW pin can be tied to ground instead of connected to a pin on the Arduino; if so, omit it from this function's parameters. 
+            </summary>
+            <param name="fourBitMode"></param>
+            <param name="rs">The number of the CPU pin that is connected to the RS (register select) pin on the LCD.</param>
+            <param name="rw">The number of the CPU pin that is connected to the RW (Read/Write) pin on the LCD (optional).</param>
+            <param name="enable">the number of the CPU pin that is connected to the enable pin on the LCD.</param>
+            <param name="d0"></param>
+            <param name="d1"></param>
+            <param name="d2"></param>
+            <param name="d3"></param>
+            <param name="d4"></param>
+            <param name="d5"></param>
+            <param name="d6"></param>
+            <param name="d7"></param>
+        </member>
+        <member name="M:RaspberryPiDotNet.MicroLiquidCrystal.RaspPiGPIOMemLcdTransferProvider.Send(System.Byte,System.Boolean,System.Boolean)">
+            <summary>
+            Write either command or data, with automatic 4/8-bit selection
+            </summary>
+            <param name="value">value to write</param>
+            <param name="mode">Mode for RS (register select) pin.</param>
+            <param name="backlight">Backlight state.</param>
+        </member>
+        <member name="M:RaspberryPiDotNet.MicroLiquidCrystal.Lcd.Begin(System.Byte,System.Byte)">
+            <summary>
+            Use this method to initialize the LCD. Specifies the dimensions (width and height) of the display. 
+            </summary>
+            <param name="columns">The number of columns that the display has.</param>
+            <param name="lines">The number of rows that the display has.</param>
+        </member>
+        <member name="M:RaspberryPiDotNet.MicroLiquidCrystal.Lcd.Clear">
+            <summary>
+            Clears the LCD screen and positions the cursor in the upper-left corner.
+            </summary>
+        </member>
+        <member name="M:RaspberryPiDotNet.MicroLiquidCrystal.Lcd.Home">
+            <summary>
+            Positions the cursor in the upper-left of the LCD. 
+            That is, use that location in outputting subsequent text to the display. 
+            To also clear the display, use the <see cref="M:RaspberryPiDotNet.MicroLiquidCrystal.Lcd.Clear"/> method instead. 
+            </summary>
+        </member>
+        <member name="M:RaspberryPiDotNet.MicroLiquidCrystal.Lcd.SetCursorPosition(System.Int32,System.Int32)">
+            <summary>
+            Position the LCD cursor; that is, set the location at which subsequent text written to the LCD will be displayed
+            </summary>
+            <param name="column"></param>
+            <param name="row"></param>
+        </member>
+        <member name="M:RaspberryPiDotNet.MicroLiquidCrystal.Lcd.ScrollDisplayLeft">
+            <summary>
+            Scrolls the contents of the display (text and cursor) one space to the left. 
+            </summary>
+        </member>
+        <member name="M:RaspberryPiDotNet.MicroLiquidCrystal.Lcd.ScrollDisplayRight">
+            <summary>
+            Scrolls the contents of the display (text and cursor) one space to the right. 
+            </summary>
+        </member>
+        <member name="M:RaspberryPiDotNet.MicroLiquidCrystal.Lcd.MoveCursor(System.Boolean)">
+            <summary>
+            Moves cursor left or right.
+            </summary>
+            <param name="right">true to move cursor right.</param>
+        </member>
+        <member name="M:RaspberryPiDotNet.MicroLiquidCrystal.Lcd.Write(System.String)">
+            <summary>
+            Writes a text to the LCD.
+            </summary>
+            <param name="text">The string to write.</param>
+        </member>
+        <member name="M:RaspberryPiDotNet.MicroLiquidCrystal.Lcd.Write(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Writes a specified number of bytes to the LCD using data from a buffer.
+            </summary>
+            <param name="buffer">The byte array that contains data to write to display.</param>
+            <param name="offset">The zero-based byte offset in the buffer parameter at which to begin copying bytes to display.</param>
+            <param name="count">The number of bytes to write.</param>
+        </member>
+        <member name="M:RaspberryPiDotNet.MicroLiquidCrystal.Lcd.WriteByte(System.Byte)">
+            <summary>
+            Sends one data byte to the display.
+            </summary>
+            <param name="data">The data byte to send.</param>
+        </member>
+        <member name="M:RaspberryPiDotNet.MicroLiquidCrystal.Lcd.SendCommand(System.Byte)">
+            <summary>
+            Sends HD44780 lcd interface command.
+            </summary>
+            <param name="data">The byte command to send.</param>
+        </member>
+        <member name="M:RaspberryPiDotNet.MicroLiquidCrystal.Lcd.CreateChar(System.Int32,System.Byte[],System.Int32)">
+            <summary>
+            Create a custom character (gylph) for use on the LCD.
+            </summary>
+            <remarks>
+            Up to eight characters of 5x8 pixels are supported (numbered 0 to 7). 
+            The appearance of each custom character is specified by an array of eight bytes, one for each row.
+            The five least significant bits of each byte determine the pixels in that row. 
+            To display a custom character on the screen, call WriteByte() and pass its number. 
+            </remarks>
+            <param name="location">Which character to create (0 to 7) </param>
+            <param name="charmap">The character's pixel data </param>
+            <param name="offset">Offset in the charmap wher character data is found </param>
+        </member>
+        <member name="M:RaspberryPiDotNet.MicroLiquidCrystal.Lcd.UpdateDisplayControl">
+            <summary>
+            Method is called when any of the display control properties are changed.
+            </summary>
+        </member>
+        <member name="P:RaspberryPiDotNet.MicroLiquidCrystal.Lcd.ShowCursor">
+            <summary>
+            Display or hide the LCD cursor: an underscore (line) at the position to which the next character will be written. 
+            </summary>
+        </member>
+        <member name="P:RaspberryPiDotNet.MicroLiquidCrystal.Lcd.BlinkCursor">
+            <summary>
+            Display or hide the blinking block cursor at the position to which the next character will be written.
+            </summary>
+        </member>
+        <member name="P:RaspberryPiDotNet.MicroLiquidCrystal.Lcd.Visible">
+            <summary>
+            Turns the LCD display on or off. This will restore the text (and cursor) that was on the display. 
+            </summary>
+        </member>
+        <member name="P:RaspberryPiDotNet.MicroLiquidCrystal.Lcd.Backlight">
+            <summary>
+            Turns the LCD backlight on or off.
+            </summary>
+        </member>
+        <member name="P:RaspberryPiDotNet.MicroLiquidCrystal.Lcd.Encoding">
+            <summary>
+            Get or set the encoding used to map the string into bytes codes that are sent LCD. 
+            UTF8 is used by default.
+            </summary>
+        </member>
+        <member name="T:RaspberryPiDotNet.PinState">
+            <summary>
+            Pin state
+            </summary>
+        </member>
+        <member name="F:RaspberryPiDotNet.PinState.High">
+            <summary>
+            High pinstate
+            </summary>
+        </member>
+        <member name="F:RaspberryPiDotNet.PinState.Low">
+            <summary>
+            Low pinstate
+            </summary>
+        </member>
+        <member name="F:RaspberryPiDotNet.TM16XX.TM16XX.charMap">
+            <summary>
+            The character map for the seven segment displays.
+            The bits are displayed by mapping bellow
+             -- 0 --
+            |       |
+            5       1
+             -- 6 --
+            4       2
+            |       |
+             -- 3 --  .7
+            </summary>
+        </member>
+    </members>
+</doc>
