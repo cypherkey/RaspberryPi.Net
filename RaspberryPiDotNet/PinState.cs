@@ -1,5 +1,11 @@
-﻿public enum PinState
+﻿namespace RaspberryPiDotNet
 {
-    High,
-    Low
+    /// <summary>
+    /// This is a cleaner way to write the Pin Status
+    /// </summary>
+    public enum PinState
+    {
+        High,
+        Low
+    }
 }
