@@ -126,6 +126,17 @@
 		V2_Pin_P5_04 = 29,
 		V2_Pin_P5_05 = 30,
 		V2_Pin_P5_06 = 31,
+		
+		//A+ and B+ pins
+		V2Plus_Pin_P1_29 = 5,
+		V2Plus_Pin_P1_31 = 6,
+		V2Plus_Pin_P1_32 = 12,
+		V2Plus_Pin_P1_33 = 13,
+		V2Plus_Pin_P1_35 = 19,
+		V2Plus_Pin_P1_36 = 16,
+		V2Plus_Pin_P1_37 = 26,
+		V2Plus_Pin_P1_38 = 20,
+		V2Plus_Pin_P1_40 = 21,
 
 	};
 
