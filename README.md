@@ -138,7 +138,7 @@ namespace RPi_Temperature
                 double temp_C = ((millivolts - 100.0) / 10.0) - 40.0;
                 double temp_F = (temp_C * 9.0 / 5.0) + 32;
 
-#if DEBUG
+# if DEBUG
                 System.Console.WriteLine("MCP3008_Channel: " + adcnum);
                 System.Console.WriteLine("read_adc0: " + read_adc0);
                 System.Console.WriteLine("millivolts: " + (float)millivolts);
@@ -150,7 +150,7 @@ namespace RPi_Temperature
 		Console.WriteLine("Date time stamp: {0}/{1}/{2} {3}:{4}:{5}",now.Month,now.Day,now.Year,
 		                  now.Hour,now.Minute,now.Second);
 		System.Console.WriteLine("\n");
-#endif
+# endif
                 Thread.Sleep(3000);
             }
         }
